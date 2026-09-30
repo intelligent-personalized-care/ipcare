@@ -33,13 +33,13 @@ class RegisterViewModel(
     }
 
     /**
-     * Attempts to register the client with the given credentials.
+     * Attempts to register the patient with the given credentials.
      *
      * @param name the name of the user
      * @param email the email of the user
      * @param password the password of the user
      */
-    fun registerClient(
+    fun registerPatient(
         name: String,
         email: String,
         password: String,
@@ -51,7 +51,7 @@ class RegisterViewModel(
         launchAndExecuteRequest(
             request = {
                 _state.value = ProgressState.WAITING
-                usersService.registerClient(
+                usersService.registerPatient(
                     name = name,
                     email = email,
                     password = password,
@@ -64,20 +64,20 @@ class RegisterViewModel(
                 }
             },
             onSuccess = {
-                sessionManager.setSession(it.id.toString(), name, it.accessToken, it.refreshToken, Role.CLIENT)
+                sessionManager.setSession(it.id.toString(), name, it.accessToken, it.refreshToken, Role.PATIENT)
                 _state.value = ProgressState.FINISHED
             }
         )
     }
 
     /**
-     * Attempts to register the monitor with the given credentials.
+     * Attempts to register the physiotherapist with the given credentials.
      *
      * @param name the name of the user
      * @param email the email of the user
      * @param password the password of the user
      */
-    fun registerMonitor(
+    fun registerPhysiotherapist(
         name: String,
         email: String,
         password: String
@@ -85,7 +85,7 @@ class RegisterViewModel(
         launchAndExecuteRequest(
             request = {
                 _state.value = ProgressState.WAITING
-                usersService.registerMonitor(
+                usersService.registerPhysiotherapist(
                     name = name,
                     email = email,
                     password = password
@@ -94,7 +94,7 @@ class RegisterViewModel(
                 }
             },
             onSuccess = {
-                sessionManager.setSession(it.id.toString(), name, it.accessToken, it.refreshToken, Role.MONITOR)
+                sessionManager.setSession(it.id.toString(), name, it.accessToken, it.refreshToken, Role.PHYSIOTHERAPIST)
             }
         )
     }

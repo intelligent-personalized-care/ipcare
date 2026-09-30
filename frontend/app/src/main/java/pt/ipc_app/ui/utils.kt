@@ -16,16 +16,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.runtime.LaunchedEffect
+import pt.ipc_app.ui.components.userFacing
+import pt.ipc_app.ui.screens.home.PatientHomeActivity
+import pt.ipc_app.ui.screens.home.PhysiotherapistHomeActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.documentfile.provider.DocumentFile
 import pt.ipc_app.R
 import pt.ipc_app.TAG
 import pt.ipc_app.service.utils.ProblemJson
 import pt.ipc_app.ui.components.ErrorAlert
-import pt.ipc_app.ui.screens.AppClientScreen
-import pt.ipc_app.ui.screens.AppMonitorScreen
+import pt.ipc_app.ui.screens.AppPatientScreen
+import pt.ipc_app.ui.screens.AppPhysiotherapistScreen
 import pt.ipc_app.ui.screens.AppViewModel
 import pt.ipc_app.ui.screens.login.LoginActivity
 import pt.ipc_app.ui.theme.AppTheme
@@ -85,21 +90,24 @@ private fun ComponentActivity.setAppContent(
 ) {
     setContent {
         content()
-        viewModel.error.collectAsState().value?.let {
-            if (it is ProblemJson && it.unauthenticatedResponse())
-                ErrorAlert(
-                    title = it.title,
-                    message = "You need to authenticate yourself.",
-                    onDismiss = {
-                        LoginActivity.navigate(this)
-                        finish()
-                    }
-                )
-            else
-                ErrorAlert(
-                    title = it.title,
-                    message = it.message
-                )
+        val error = viewModel.error.collectAsState().value
+        val isHome = this is PatientHomeActivity || this is PhysiotherapistHomeActivity
+        if (error != null) {
+            val expired = error is ProblemJson && error.unauthenticatedResponse()
+            if (isHome) {
+                LaunchedEffect(error) {
+                    viewModel.dismissError()
+                    if (expired) { LoginActivity.navigate(this@setAppContent); finish() }
+                }
+            } else {
+                val display = error.userFacing()
+                AppTheme {
+                    ErrorAlert(title = display.title, message = display.message, onDismiss = {
+                        viewModel.dismissError()
+                        if (expired) { LoginActivity.navigate(this@setAppContent); finish() }
+                    })
+                }
+            }
         }
     }
 }
@@ -122,12 +130,12 @@ fun ComponentActivity.setAppContentInitial(
 }
 
 
-fun ComponentActivity.setAppContentClient(
+fun ComponentActivity.setAppContentPatient(
     viewModel: AppViewModel,
     content: @Composable () -> Unit
 ) {
     setAppContent(viewModel) {
-        AppClientScreen(
+        AppPatientScreen(
             buttonBarClicked = viewModel.buttonBarClicked.collectAsState().value,
             onNavigated = ::finish,
             content = content
@@ -135,12 +143,12 @@ fun ComponentActivity.setAppContentClient(
     }
 }
 
-fun ComponentActivity.setAppContentMonitor(
+fun ComponentActivity.setAppContentPhysiotherapist(
     viewModel: AppViewModel,
     content: @Composable () -> Unit
 ) {
     setAppContent(viewModel) {
-        AppMonitorScreen(
+        AppPhysiotherapistScreen(
             buttonBarClicked = viewModel.buttonBarClicked.collectAsState().value,
             onNavigated = ::finish,
             content = content

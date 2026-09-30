@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.widget.DatePicker
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -70,7 +71,7 @@ fun MyDatePicker(
     onClick: () -> Unit,
 ) {
     Box(
-        modifier = Modifier.padding(horizontal = 48.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
         CustomTextField(
             textToDisplay = value,
@@ -78,12 +79,13 @@ fun MyDatePicker(
             fieldType = fieldType,
             iconImageVector = Icons.Default.DateRange,
             updateText = onValueChange,
-            modifier = Modifier
+            modifier = Modifier.fillMaxWidth()
         )
-        Box(modifier = Modifier
-            .matchParentSize()
-            .alpha(0f)
-            .clickable(onClick = onClick)
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .alpha(0f)
+                .clickable(onClick = onClick)
         )
     }
 }

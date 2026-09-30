@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 import java.util.UUID
 
 @Parcelize
-data class RequestsOfMonitor(
+data class RequestsOfPhysiotherapist(
     val requests: List<RequestInformation>
 ): Parcelable
 
@@ -13,7 +13,7 @@ data class RequestsOfMonitor(
 data class RequestInformation(
     val requestID: UUID,
     val requestText: String? = null,
-    val clientID: UUID,
-    val clientName: String,
-    val clientEmail: String
+    val patientID: UUID,
+    val patientName: String,
+    val patientEmail: String
 ): Parcelable

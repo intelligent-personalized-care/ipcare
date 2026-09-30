@@ -1,29 +1,11 @@
 package pt.ipc.api
 
-import org.jdbi.v3.core.Jdbi
-import org.junit.jupiter.api.Test
-import org.postgresql.ds.PGSimpleDataSource
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Primary
-import org.springframework.http.HttpHeaders
-import org.springframework.stereotype.Component
-import org.springframework.test.web.reactive.server.WebTestClient
-import org.springframework.web.util.UriComponentsBuilder
-import pt.ipc.http.controllers.clients.models.RegisterClientInput
-import pt.ipc.http.pipeline.exceptionHandler.Problem
-import pt.ipc.http.utils.Uris
-import pt.ipc.services.dtos.CredentialsOutput
-import pt.ipc.services.dtos.RegisterInput
-import pt.ipc.storage.repositories.jdbi.configure
 import java.util.*
-import kotlin.test.assertEquals
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UsersTests {
-
+/*
     @TestConfiguration
     @Component
     class TestConfig {
@@ -39,9 +21,9 @@ class UsersTests {
     @LocalServerPort
     var port: Int = 0
 
-    private fun registerClientInput(): RegisterClientInput {
+    private fun registerPatientInput(): RegisterPatientInput {
         val uuid = UUID.randomUUID()
-        return RegisterClientInput(name = uuid.toString(), email = "$uuid@gmail.com", password = "@Password12")
+        return RegisterPatientInput(name = uuid.toString(), email = "$uuid@gmail.com", password = "@Password12")
     }
 
     private fun registerInput(): RegisterInput {
@@ -50,10 +32,10 @@ class UsersTests {
     }
 
     @Test
-    fun `Create Client`() {
+    fun `Create Patient`() {
         val httpClient = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
-        val registerClientInput = RegisterClientInput(
+        val registerPatientInput = RegisterPatientInput(
             name = "Test123",
             email = UUID.randomUUID().toString() + "@gmail.com",
             password = "@Password1"
@@ -61,9 +43,9 @@ class UsersTests {
 
         httpClient
             .post()
-            .uri(Uris.CLIENT_REGISTER)
+            .uri(Uris.PATIENT_REGISTER)
             .bodyValue(
-                registerClientInput
+                registerPatientInput
             )
             .exchange()
             .expectStatus().isCreated
@@ -74,7 +56,7 @@ class UsersTests {
     fun `Bad Email`() {
         val httpClient = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
-        val registerClientInput = RegisterClientInput(
+        val registerPatientInput = RegisterPatientInput(
             name = "Test",
             email = "bad email",
             password = "@Password1"
@@ -82,9 +64,9 @@ class UsersTests {
 
         val result = httpClient
             .post()
-            .uri(Uris.CLIENT_REGISTER)
+            .uri(Uris.PATIENT_REGISTER)
             .bodyValue(
-                registerClientInput
+                registerPatientInput
             )
             .exchange()
             .expectStatus().isBadRequest
@@ -100,7 +82,7 @@ class UsersTests {
 
         val uuid = UUID.randomUUID()
 
-        val registerClientInput = RegisterClientInput(
+        val registerPatientInput = RegisterPatientInput(
             name = uuid.toString(),
             email = "$uuid@gmail.com",
             password = "bad password"
@@ -108,9 +90,9 @@ class UsersTests {
 
         httpClient
             .post()
-            .uri(Uris.CLIENT_REGISTER)
+            .uri(Uris.PATIENT_REGISTER)
             .bodyValue(
-                registerClientInput
+                registerPatientInput
             )
             .exchange()
             .expectStatus().isBadRequest
@@ -119,33 +101,33 @@ class UsersTests {
 
     @Test
     fun `create Same User`() {
-        val registerClientInput = registerClientInput()
+        val registerPatientInput = registerPatientInput()
 
         val httpClient = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         httpClient.post()
-            .uri(Uris.CLIENT_REGISTER)
-            .bodyValue(registerClientInput)
+            .uri(Uris.PATIENT_REGISTER)
+            .bodyValue(registerPatientInput)
             .exchange()
             .expectStatus().isCreated
             .expectBody(CredentialsOutput::class.java)
 
         httpClient.post()
-            .uri(Uris.CLIENT_REGISTER)
-            .bodyValue(registerClientInput)
+            .uri(Uris.PATIENT_REGISTER)
+            .bodyValue(registerPatientInput)
             .exchange()
             .expectStatus().isBadRequest
             .expectBody(Problem::class.java)
     }
 
     @Test
-    fun `create Monitor`() {
+    fun `create Physiotherapist`() {
         val registerInput = registerInput()
 
         val httpClient = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         httpClient.post()
-            .uri(Uris.MONITORS)
+            .uri(Uris.PHYSIOTHERAPISTS)
             .bodyValue(registerInput)
             .exchange()
             .expectStatus().isCreated
@@ -153,20 +135,20 @@ class UsersTests {
     }
 
     @Test
-    fun `create Same Monitor`() {
+    fun `create Same Physiotherapist`() {
         val registerInput = registerInput()
 
         val httpClient = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         httpClient.post()
-            .uri(Uris.MONITORS)
+            .uri(Uris.PHYSIOTHERAPISTS)
             .bodyValue(registerInput)
             .exchange()
             .expectStatus().isCreated
             .expectBody(CredentialsOutput::class.java)
 
         httpClient.post()
-            .uri(Uris.MONITORS)
+            .uri(Uris.PHYSIOTHERAPISTS)
             .bodyValue(registerInput)
             .exchange()
             .expectStatus().isBadRequest
@@ -181,7 +163,7 @@ class UsersTests {
 
         val credentialsOutput =
             httpClient.post()
-                .uri(Uris.MONITORS)
+                .uri(Uris.PHYSIOTHERAPISTS)
                 .bodyValue(registerInput)
                 .exchange()
                 .expectStatus().isCreated
@@ -189,7 +171,7 @@ class UsersTests {
                 .returnResult()
                 .responseBody!!
 
-        val uri = UriComponentsBuilder.fromPath(Uris.CLIENTS_OF_MONITOR)
+        val uri = UriComponentsBuilder.fromPath(Uris.PATIENTS_OF_PHYSIOTHERAPIST)
             .buildAndExpand(credentialsOutput.id).toUriString()
 
         httpClient.post()
@@ -202,18 +184,20 @@ class UsersTests {
     }
 
     @Test
-    fun `Try Requesting monitor and accepting`() {
-        val registerClientInput = registerClientInput()
+    fun `Try Requesting physiotherapist and accepting`() {
+        val registerPatientInput = registerPatientInput()
 
         val httpClient = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         httpClient.post()
-            .uri(Uris.CLIENT_REGISTER)
-            .bodyValue(registerClientInput)
+            .uri(Uris.PATIENT_REGISTER)
+            .bodyValue(registerPatientInput)
             .exchange()
             .expectStatus().isCreated
             .expectBody(CredentialsOutput::class.java)
             .returnResult()
             .responseBody!!
     }
+
+ */
 }

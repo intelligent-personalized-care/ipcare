@@ -9,6 +9,5 @@ enum class ButtonBarType(val iconEnabled: ImageVector, val iconDisabled: ImageVe
     HOME(Icons.Filled.Home, Icons.Outlined.Home),
     PLANS(Icons.Filled.PostAdd, Icons.Outlined.PostAdd),
     EXERCISES(Icons.Filled.SportsGymnastics, Icons.Outlined.SportsGymnastics),
-    PROFILE(Icons.Filled.AccountCircle, Icons.Outlined.AccountCircle),
-    ABOUT(Icons.Filled.Info, Icons.Outlined.Info)
+    PROFILE(Icons.Filled.AccountCircle, Icons.Outlined.AccountCircle)
 }

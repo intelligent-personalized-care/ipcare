@@ -1,1938 +1,3810 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
   title: Intelligent Personalized Care API
-  description: 'A Solution to promote Physical Agility and Recovery.'
-  termsOfService: https://swagger.io/terms/
-  version: 1.0.0
-
+  version: 2.0.0
+  description: Current backend HTTP contract. User roles and routes use PATIENT and PHYSIOTHERAPIST terminology.
+    Catalogue exerciseID is a UUID; execution exerciseID is an assigned daily-exercise integer. Examples are synthetic.
+    Protected operations use Bearer access tokens; physiotherapist-only operations generally also require approved
+    credentials.
 servers:
-  - url: https://organic-byway-391719.ew.r.appspot.com
-  - url: http://localhost:8080
-
+- url: http://localhost:8080
+  description: Local development
+- url: https://organic-byway-391719.ew.r.appspot.com
+  description: Configured hosted endpoint; availability not verified
 tags:
-  - name: Users
-  - name: Admin
-  - name: Monitors
-  - name: Clients
-  - name: Plans
-  - name: Exercises
-
+- name: Users
+- name: Patients
+- name: Physiotherapists
+- name: Plans
+- name: Exercises
+- name: Execution
+- name: Admin
 paths:
-  
-  /users/login:
-    post:
-      tags:
-        - Users
-      summary: Logs a user in
-      requestBody:
-        description: User credentials
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LoginUserRequest'
-      responses:
-        200:
-          description: User was logged in
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LoginUserResponse'
-        400:
-          description: Invalid email or password
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequest'
-        404:
-          description: No user with that email exists
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFound'
-          
-  /users/refresh:
-    post:
-      tags:
-        - Users
-      summary: Refreshs the user tokens
-      requestBody:
-        description: User refresh token
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RefreshUserRequest'
-      responses:
-        200:
-          description: User tokens have been refreshed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RefreshUserResponse'
-                
-  /users/{idUser}/photo:
+  /admin/unverified_physiotherapists:
     get:
       tags:
-        - Users
-      summary: Gets a photo of user
+      - Admin
+      summary: Get unverified physiotherapists
+      operationId: get_admin_unverified_physiotherapists
+      description: 'Get unverified physiotherapists. Authorization: administrator.'
       security:
-        - token: [ ]
-      parameters:
-        - name: idUser
-          in: path
-          description: User id
-          required: true
-          schema:
-            type: string
+      - bearerAuth: []
       responses:
-        200:
-          description: Photo of user.
-          content:
-            image/png:
-              schema:
-                type: string
-                format: bynary
-        404:
-          description: User not found.
+        '200':
+          description: Success.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NotFound'
-          
-  /admin:
-    post:
-      tags:
-        - Admin
-      summary: Creates a new admin
-      security:
-        - token: [ ]
-      requestBody:
-        description: Admin object
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateUserRequest'
-      responses:
-        201:
-          description: Admin was created.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreateUserResponse'
-        400:
-          description: Invalid user request body. User name invalid, email invalid or insecure password.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequest'
-        409:
-          description: User with this email already exists.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Conflict'
-          
-  /admin/unverified_monitors:
+                $ref: '#/components/schemas/ListOfUnverifiedPhysiotherapists'
+              example:
+                physiotherapists:
+                - id: 10000000-0000-4000-8000-000000000001
+                  name: Example Patient
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+  /admin/unverified_physiotherapists/{physiotherapistID}:
     get:
       tags:
-        - Admin
-      summary: Gets all monitors unverified
+      - Admin
+      summary: Credential of physiotherapist
+      operationId: get_admin_unverified_physiotherapists_physiotherapistID
+      description: 'Credential of physiotherapist. Authorization: administrator.'
       security:
-        - token: [ ]
+      - bearerAuth: []
       responses:
-        200:
-          description: List of monitors
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MonitorsUnverifiedResponse'
-          
-  /admin/unverified_monitors/{idMonitor}:
-    post:
-      tags:
-        - Admin
-      summary: Gives validation to a monitor
-      security:
-        - token: [ ]
-      parameters:
-        - name: idMonitor
-          in: path
-          description: Monitor id
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Monitor object
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DecideMonitorValidationRequest'
-      responses:
-        200:
-          description: Monitor was verified.
-    get:
-      tags:
-        - Admin
-      summary: Gets a credential of a monitor
-      security:
-        - token: [ ]
-      parameters:
-        - name: idMonitor
-          in: path
-          description: Monitor id
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: The credential of a monitor in pdf file
+        '200':
+          description: Success.
           content:
             application/pdf:
               schema:
                 type: string
-                format: bynary
-          
-  /users/monitors:
+                format: binary
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: physiotherapistID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
     post:
       tags:
-        - Monitors
-      summary: Creates a new monitor
+      - Admin
+      summary: Decide credential of physiotherapist
+      operationId: post_admin_unverified_physiotherapists_physiotherapistID
+      description: 'Decide credential of physiotherapist. Authorization: administrator.'
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No content.
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: physiotherapistID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
       requestBody:
-        description: Monitor object
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateUserRequest'
-      responses:
-        201:
-          description: Monitor was created.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreateUserResponse'
-        400:
-          description: Invalid user request body. User name invalid, email invalid or insecure password.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequest'
-        409:
-          description: User with this email already exists.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Conflict'
-    get:
-      tags:
-        - Monitors
-      summary: Searchs all monitors available
-      security:
-        - token: [ ]
-      parameters:
-        - name: name
-          in: query
-          description: Similar Name of monitors
-          required: false
-          schema:
-            type: string
-        - name: skip
-          in: query
-          description: Number of monitors to skip
-          required: false
-          schema:
-            type: integer
-            default: 0
-        - name: limit
-          in: query
-          description: Number of monitors that are returned
-          required: false
-          schema:
-            type: integer
-            default: 10
-      responses:
-        200:
-          description: List of monitors
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MonitorsAvailableResponse'
-                
-  /users/monitors/{idMonitor}:
-    get:
-      tags:
-        - Monitors
-      summary: Gets a monitor by id
-      security:
-        - token: [ ]
-      parameters:
-        - name: idMonitor
-          in: path
-          description: Monitor id
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: Monitor was found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        404:
-          description: Monitor not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFound'
+              $ref: '#/components/schemas/Decision'
+            example:
+              accept: true
+  /users/physiotherapists:
     post:
       tags:
-        - Clients
-      summary: Client sends a connection request to a monitor
-      security:
-        - token: [ ]
-      parameters:
-        - name: idMonitor
-          in: path
-          description: Monitor id
-          required: true
-          schema:
-            type: string
+      - Physiotherapists
+      summary: Register physiotherapist
+      operationId: post_users_physiotherapists
+      description: Register physiotherapist.
+      security: []
+      responses:
+        '201':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialsOutput'
+              example:
+                id: 10000000-0000-4000-8000-000000000001
+                accessToken: <accessToken>
+                refreshToken: <refreshToken>
+        '400':
+          $ref: '#/components/responses/Error400'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
       requestBody:
-        description: Request object
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ClientConnectionRequest'
+              $ref: '#/components/schemas/RegisterInput'
+            example:
+              email: physiotherapist@example.test
+              name: Example Physiotherapist
+              password: Example-password1@
+    get:
+      tags:
+      - Patients
+      summary: Search physiotherapists available
+      operationId: get_users_physiotherapists
+      description: 'Search approved physiotherapists by a case-insensitive literal name fragment. A missing or blank
+        name lists all approved physiotherapists. Results have a stable name/ID order. No matches returns HTTP 200
+        with {"physiotherapists": []}. Authorization: authenticated patient.'
+      security:
+      - bearerAuth: []
       responses:
-        201:
-          description: The request to the monitor was made
+        '200':
+          description: Success.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateRequestResponse'
-        404:
-          description: Monitor not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFound'
-                
-  /users/monitors/{idMonitor}/credential:
+                $ref: '#/components/schemas/AllPhysiotherapistsAvailableOutput'
+              example:
+                physiotherapists:
+                - id: 10000000-0000-4000-8000-000000000001
+                  name: Example Patient
+                  email: patient@example.test
+                  rating:
+                    averageStarts: 1
+                    nrOfReviews: 1
+                  requested: true
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: name
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+  /users/physiotherapists/{physiotherapistID}/credential:
     post:
       tags:
-        - Monitors
-      summary: Submits a credential of a monitor
+      - Physiotherapists
+      summary: Post credential of physiotherapist
+      operationId: post_users_physiotherapists_physiotherapistID_credential
+      description: 'Upload multipart/form-data with the file part named credential. Only the owner may submit; this
+        route is allowed before credential approval. Authorization: physiotherapist.'
       security:
-        - token: [ ]
+      - bearerAuth: []
+      responses:
+        '201':
+          description: Success.
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
       parameters:
-        - name: idMonitor
-          in: path
-          description: Monitor id
-          required: true
-          schema:
-            type: string
+      - name: physiotherapistID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
       requestBody:
-        description: The credential of a monitor in file
         required: true
         content:
           multipart/form-data:
             schema:
               type: object
+              required:
+              - credential
               properties:
                 credential:
                   type: string
                   format: binary
-      responses:
-        201:
-          description: Monitor credential has been submitted.
-                
-  /users/monitors/{idMonitor}/profile:
+  /users/physiotherapists/{physiotherapistID}/profile:
     get:
       tags:
-        - Monitors
-      summary: Gets the profile of the monitor
+      - Physiotherapists
+      summary: Physiotherapist profile
+      operationId: get_users_physiotherapists_physiotherapistID_profile
+      description: 'Physiotherapist profile. Authorization: physiotherapist.'
       security:
-        - token: [ ]
-      parameters:
-        - name: idMonitor
-          in: path
-          description: Monitor id
-          required: true
-          schema:
-            type: string
+      - bearerAuth: []
       responses:
-        200:
-          description: Monitor information
+        '200':
+          description: Success.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MonitorProfile'
-                
-  /users/monitors/{idMonitor}/profile/photo:
+                $ref: '#/components/schemas/PhysiotherapistProfile'
+              example:
+                id: 10000000-0000-4000-8000-000000000001
+                name: Example Patient
+                email: patient@example.test
+                rating:
+                  averageStarts: 1
+                  nrOfReviews: 1
+                docState: invalid
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: physiotherapistID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+  /users/physiotherapists/{physiotherapistID}/patients:
+    get:
+      tags:
+      - Physiotherapists
+      summary: Get patients of physiotherapist
+      operationId: get_users_physiotherapists_physiotherapistID_patients
+      description: 'Get patients of physiotherapist. Authorization: physiotherapist.'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListOfPatients'
+              example:
+                patients:
+                - id: 10000000-0000-4000-8000-000000000001
+                  name: Example Patient
+                  email: patient@example.test
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: physiotherapistID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+  /users/physiotherapists/{physiotherapistID}/patients/{patientID}:
+    get:
+      tags:
+      - Physiotherapists
+      summary: Patient of physiotherapist
+      operationId: get_users_physiotherapists_physiotherapistID_patients_patientID
+      description: 'Patient of physiotherapist. Authorization: physiotherapist.'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientOfPhysiotherapist'
+              example:
+                id: 10000000-0000-4000-8000-000000000001
+                name: Example Patient
+                email: patient@example.test
+                weight: 1
+                height: 1
+                physicalCondition: Example physicalCondition
+                birthDate: '2026-09-20'
+                plans:
+                - id: 1
+                  title: Wrist rehabilitation
+                  startDate: '2026-09-20'
+                  endDate: '2026-09-20'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: physiotherapistID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      - name: patientID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+    delete:
+      tags:
+      - Physiotherapists
+      summary: End patient connection
+      operationId: delete_users_physiotherapists_physiotherapistID_patients_patientID
+      description: 'End patient connection. Authorization: physiotherapist.'
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No content.
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: physiotherapistID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      - name: patientID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+  /users/physiotherapists/{physiotherapistID}:
+    get:
+      tags:
+      - Physiotherapists
+      summary: Get physiotherapist
+      operationId: get_users_physiotherapists_physiotherapistID
+      description: 'Get physiotherapist. Authorization: physiotherapist.'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhysiotherapistDetails'
+              example:
+                id: 10000000-0000-4000-8000-000000000001
+                name: Example Patient
+                email: patient@example.test
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: physiotherapistID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
     post:
       tags:
-        - Monitors
-      summary: Updates a photo of a monitor
+      - Patients
+      summary: Make request for physiotherapist
+      operationId: post_users_physiotherapists_physiotherapistID
+      description: 'Make request for physiotherapist. Authorization: patient owner (or assigned physiotherapist
+        on shared result/profile routes).'
       security:
-        - token: [ ]
+      - bearerAuth: []
+      responses:
+        '201':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestIdOutput'
+              example:
+                requestID: 10000000-0000-4000-8000-000000000001
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
       parameters:
-        - name: idMonitor
-          in: path
-          description: Monitor id
-          required: true
-          schema:
-            type: string
+      - name: physiotherapistID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
       requestBody:
-        description: The photo of a monitor in file
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionRequest'
+            example:
+              patientID: 10000000-0000-4000-8000-000000000001
+              text: Please supervise my rehabilitation.
+  /users/physiotherapists/{physiotherapistID}/requests/{requestID}:
+    post:
+      tags:
+      - Physiotherapists
+      summary: Decide request
+      operationId: post_users_physiotherapists_physiotherapistID_requests_requestID
+      description: 'Returns 200 with the patient list when accepting; 204 with no body when rejecting. Authorization:
+        physiotherapist.'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListOfPatients'
+              example:
+                patients:
+                - id: 10000000-0000-4000-8000-000000000001
+                  name: Example Patient
+                  email: patient@example.test
+        '204':
+          description: No content.
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: physiotherapistID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      - name: requestID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Resource identifier.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Decision'
+            example:
+              accept: true
+  /users/physiotherapists/{physiotherapistID}/profile/photo:
+    post:
+      tags:
+      - Physiotherapists
+      summary: Add profile picture
+      operationId: post_users_physiotherapists_physiotherapistID_profile_photo
+      description: 'Add profile picture. Authorization: physiotherapist.'
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          description: Success.
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: physiotherapistID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      requestBody:
         required: true
         content:
           multipart/form-data:
             schema:
               type: object
+              required:
+              - photo
               properties:
                 photo:
                   type: string
                   format: binary
-      responses:
-        201:
-          description: Monitor photo has been updated.
-                
-  /users/monitors/{idMonitor}/requests:
+  /users/physiotherapists/{physiotherapistID}/requests:
     get:
       tags:
-        - Monitors
-      summary: Gets all client connection requests for a monitor
+      - Physiotherapists
+      summary: Get physiotherapist requests
+      operationId: get_users_physiotherapists_physiotherapistID_requests
+      description: 'Get physiotherapist requests. Authorization: physiotherapist.'
       security:
-        - token: [ ]
-      parameters:
-        - name: idMonitor
-          in: path
-          description: Monitor id
-          required: true
-          schema:
-            type: string
+      - bearerAuth: []
       responses:
-        200:
-          description: List of all client requests for a monitor
+        '200':
+          description: Success.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MonitorRequestsResponse'
-        404:
-          description: No monitor with that id exists
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFound'
-                
-  /users/monitors/{idMonitor}/requests/{idRequest}:
+                $ref: '#/components/schemas/RequestsOfPhysiotherapist'
+              example:
+                requests:
+                - requestID: 10000000-0000-4000-8000-000000000001
+                  requestText: Example requestText
+                  patientID: 10000000-0000-4000-8000-000000000001
+                  patientName: Example patientName
+                  patientEmail: patient@example.test
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: physiotherapistID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+  /users/physiotherapists/{physiotherapistID}/plans:
     post:
       tags:
-        - Monitors
-      summary: Accept client connection request for a monitor
+      - Plans
+      summary: Create plan of physiotherapist
+      operationId: post_users_physiotherapists_physiotherapistID_plans
+      description: 'Creates a reusable template. Each exercise may omit sensorProfile to inherit catalogue defaults
+        or include a per-day override used by both execution modes. Authorization: physiotherapist.'
       security:
-        - token: [ ]
+      - bearerAuth: []
+      responses:
+        '201':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanID'
+              example:
+                id: 1
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
       parameters:
-        - name: idMonitor
-          in: path
-          description: Monitor id
-          required: true
-          schema:
-            type: string
-        - name: idRequest
-          in: path
-          description: Request id
-          required: true
-          schema:
-            type: string
+      - name: physiotherapistID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
       requestBody:
-        description: Decision of client connection request object
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DecideClientConnectionRequest'
-      responses:
-        200:
-          description: List of all monitor clients
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MonitorClientsResponse'
-        404:
-          description: No monitor or request with that id exists
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFound'
-
-  /users/monitors/{idMonitor}/clients:
+              $ref: '#/components/schemas/PlanInput'
+            example:
+              title: Wrist rehabilitation
+              dailyLists:
+              - exercises:
+                - exerciseInfoID: 73a20000-cc31-4c29-9000-000000000001
+                  sets: 2
+                  reps: 10
+              - null
+              - exercises:
+                - exerciseInfoID: 73a20000-cc31-4c29-9000-000000000001
+                  sets: 2
+                  reps: 10
+                  sensorProfile:
+                    raiseThreshold: 40.0
+                    lowerThreshold: 5.0
+                    minRaiseTimeMs: 1000
+                    holdTimeMs: 5000
+                    cooldownMs: 1000
+                    minMovementSpeed: 0.0
+                    minPitch: -20.0
+                    maxPitch: 20.0
+                    minRoll: -10.0
+                    maxRoll: 60.0
+                    useRoll: true
+                    movementDirection: 1
     get:
       tags:
-        - Monitors
-      summary: Gets all monitor clients
+      - Plans
+      summary: Get plans of physiotherapist
+      operationId: get_users_physiotherapists_physiotherapistID_plans
+      description: 'Get plans of physiotherapist. Authorization: physiotherapist.'
       security:
-        - token: [ ]
-      parameters:
-        - name: idMonitor
-          in: path
-          description: Monitor id
-          required: true
-          schema:
-            type: string
+      - bearerAuth: []
       responses:
-        200:
-          description: List of all monitor clients
+        '200':
+          description: Success.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MonitorClientsResponse'
-        404:
-          description: No monitor with that id exists
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFound'
-                
-  /users/monitors/{idMonitor}/clients/exercises:
-    get:
-      tags:
-        - Monitors
-      summary: Gets all exercises of monitor clients
-      security:
-        - token: [ ]
+                $ref: '#/components/schemas/ListOfPlans'
+              example:
+                plans:
+                - id: 1
+                  title: Wrist rehabilitation
+                  days: 1
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
       parameters:
-        - name: idMonitor
-          in: path
-          description: Monitor id
-          required: true
-          schema:
-            type: string
-        - name: date
-          in: query
-          description: Date to search the exercises of clients (format yyyy-mm-dd)
-          required: false
-          schema:
-            type: string
-      responses:
-        200:
-          description: List of all exercises of clients
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MonitorClientsExercisesResponse'
-        404:
-          description: No monitor with that id exists
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFound'
-                
-  /users/monitors/{idMonitor}/clients/{idClient}:
-    get:
-      tags:
-        - Monitors
-      summary: Gets a client of monitor
-      security:
-        - token: [ ]
-      parameters:
-        - name: idMonitor
-          in: path
-          description: Monitor id
-          required: true
-          schema:
-            type: string
-        - name: idClient
-          in: path
-          description: Client id
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: Client details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFound'
-        404:
-          description: No monitor or client with that id exists
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFound'
-                
-  /users/monitors/{idMonitor}/rate:
+      - name: physiotherapistID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+  /users/physiotherapists/{physiotherapistID}/patients/{patientID}/plans:
     post:
       tags:
-        - Clients
-      summary: Client rates a monitor
+      - Plans
+      summary: Associate plan for patient
+      operationId: post_users_physiotherapists_physiotherapistID_patients_patientID_plans
+      description: 'Assigns a copy of the template to the patient starting on startDate. Reassigning the same template
+        produces independent plan, daily-list and exercise IDs. Afterwards fetch the patient plan and use its IDs
+        for execution routes. Authorization: physiotherapist.'
       security:
-        - token: [ ]
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No content.
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
       parameters:
-        - name: idMonitor
-          in: path
-          description: Monitor id
-          required: true
-          schema:
-            type: string
+      - name: physiotherapistID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      - name: patientID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
       requestBody:
-        description: Request object
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RateMonitorRequest'
+              $ref: '#/components/schemas/PlanToPatient'
+            example:
+              planID: 1
+              startDate: '2026-09-20'
+  /users/physiotherapists/{physiotherapistID}/plans/{planID}:
+    get:
+      tags:
+      - Plans
+      summary: Get plan of physiotherapist by id
+      operationId: get_users_physiotherapists_physiotherapistID_plans_planID
+      description: 'Get plan of physiotherapist by id. Authorization: physiotherapist.'
+      security:
+      - bearerAuth: []
       responses:
-        200:
-          description: The rating for the monitor was made
-        404:
-          description: Monitor not found
+        '200':
+          description: Success.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NotFound'
-                
-  /users/clients:
+                $ref: '#/components/schemas/PlanOutput'
+              example:
+                id: 1
+                title: Wrist rehabilitation
+                startDate: '2026-09-20'
+                dailyLists:
+                - id: 1
+                  exercises:
+                  - id: 1
+                    exerciseInfoID: 10000000-0000-4000-8000-000000000001
+                    title: Wrist rehabilitation
+                    description: Example description
+                    type: Example type
+                    sets: 1
+                    reps: 1
+                    isDone: true
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: physiotherapistID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      - name: planID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Resource identifier.
+  /users/physiotherapists/{physiotherapistID}/patients/exercises:
+    get:
+      tags:
+      - Physiotherapists
+      summary: Exercises of patients
+      operationId: get_users_physiotherapists_physiotherapistID_patients_exercises
+      description: 'Exercises of patients. Authorization: physiotherapist.'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExercisesOfPatients'
+              example:
+                patientsExercises:
+                - id: 10000000-0000-4000-8000-000000000001
+                  name: Example Patient
+                  planId: 1
+                  dailyListId: 1
+                  exercises:
+                  - id: 1
+                    exerciseInfoID: 10000000-0000-4000-8000-000000000001
+                    title: Wrist rehabilitation
+                    description: Example description
+                    type: Example type
+                    sets: 1
+                    reps: 1
+                    isDone: true
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: physiotherapistID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      - name: date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+  /users/patients/{patientID}/physiotherapist:
+    get:
+      tags:
+      - Patients
+      summary: Get physiotherapist of patient
+      operationId: get_users_patients_patientID_physiotherapist
+      description: 'Get physiotherapist of patient. Authorization: patient owner (or assigned physiotherapist on
+        shared result/profile routes).'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhysiotherapistOutput'
+              example:
+                id: 10000000-0000-4000-8000-000000000001
+                name: Example Patient
+                email: patient@example.test
+                rating:
+                  averageStarts: 1
+                  nrOfReviews: 1
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: patientID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+    delete:
+      tags:
+      - Patients
+      summary: End physiotherapist connection
+      operationId: delete_users_patients_patientID_physiotherapist
+      description: 'End physiotherapist connection. Authorization: patient owner (or assigned physiotherapist on
+        shared result/profile routes).'
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No content.
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: patientID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+  /users/physiotherapists/{physiotherapistID}/rate:
     post:
       tags:
-        - Clients
-      summary: Creates a new client
+      - Patients
+      summary: Rate physiotherapist
+      operationId: post_users_physiotherapists_physiotherapistID_rate
+      description: 'Rate physiotherapist. Authorization: patient owner (or assigned physiotherapist on shared result/profile
+        routes).'
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No content.
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: physiotherapistID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
       requestBody:
-        description: Client object
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateClientRequest'
-      responses:
-        201:
-          description: Client was created.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreateUserResponse'
-        400:
-          description: Invalid user request body. User name invalid, email invalid or insecure password.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequest'
-        409:
-          description: User with this email already exists.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Conflict'
-                
-  /users/clients/{idClient}/profile:
-    get:
-      tags:
-        - Clients
-      summary: Gets the profile of the client
-      security:
-        - token: [ ]
-      parameters:
-        - name: idClient
-          in: path
-          description: Client id
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: Client information
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ClientProfile'
-                
-  /users/clients/{idClient}/profile/photo:
+              $ref: '#/components/schemas/RatingInput'
+            example:
+              user: 10000000-0000-4000-8000-000000000001
+              rating: 5
+  /admin:
     post:
       tags:
-        - Clients
-      summary: Updates a photo of a client
+      - Admin
+      summary: Create admin account
+      operationId: post_admin
+      description: 'Requires an existing administrator account. This is not a public bootstrap endpoint. Authorization:
+        administrator.'
       security:
-        - token: [ ]
-      parameters:
-        - name: idClient
-          in: path
-          description: Client id
-          required: true
-          schema:
-            type: string
+      - bearerAuth: []
+      responses:
+        '201':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialsOutput'
+              example:
+                id: 10000000-0000-4000-8000-000000000001
+                accessToken: <accessToken>
+                refreshToken: <refreshToken>
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
       requestBody:
-        description: The photo of a client in file
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterInput'
+            example:
+              email: physiotherapist@example.test
+              name: Example Physiotherapist
+              password: Example-password1@
+  /admin/video_preview:
+    post:
+      tags:
+      - Admin
+      summary: Add video preview
+      operationId: post_admin_video_preview
+      description: 'Creates a catalogue entry and stores its demonstration video. Required multipart parts: video,
+        title, description, type. This endpoint does not accept detection settings or an existing catalogue ID.
+        Authorization: administrator.'
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          description: Success.
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      requestBody:
         required: true
         content:
           multipart/form-data:
             schema:
               type: object
+              required:
+              - video
+              - title
+              - description
+              - type
               properties:
-                photo:
+                video:
                   type: string
                   format: binary
-      responses:
-        201:
-          description: Client photo has been updated.
-
-  /users/clients/{idClient}/monitor:
-    get:
-      tags:
-        - Clients
-      summary: Gets the monitor of the client
-      security:
-        - token: [ ]
-      parameters:
-        - name: idClient
-          in: path
-          description: Client id
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: Monitor of client information
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MonitorOfClient'
-        404:
-          description: Client not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFound'
-                
-  /users/monitors/{idMonitor}/plans:
-    post:
-      tags:
-        - Plans
-      summary: Creates a new plan
-      security:
-        - token: [ ]
-      parameters:
-        - name: idMonitor
-          in: path
-          description: Monitor id
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Plan object
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreatePlanRequest'
-      responses:
-        201:
-          description: Plan was created.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreatePlanResponse'
-        400:
-          description: Invalid request body.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequest'
-    get:
-      tags:
-        - Plans
-      summary: Gets the plans of the monitor
-      security:
-        - token: [ ]
-      parameters:
-        - name: idMonitor
-          in: path
-          description: Monitor id
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: Plans of monitor information
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PlansInfoResponse'
-        404:
-          description: Monitor not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFound'
-                
-  /users/monitors/{idMonitor}/plans/{idPlan}:
-    get:
-      tags:
-        - Plans
-      summary: Gets a plan by id
-      security:
-        - token: [ ]
-      parameters:
-        - name: idMonitor
-          in: path
-          description: Monitor id
-          required: true
-          schema:
-            type: string
-        - name: idPlan
-          in: path
-          description: Plan id
-          required: true
-          schema:
-            type: integer
-      responses:
-        200:
-          description: Plan object.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Plan'
-        404:
-          description: Monitor or plan not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFound'
-                
-  /users/clients/{idClient}/plans:
-    get:
-      tags:
-        - Plans
-      summary: Gets a plan that is running on a date
-      security:
-        - token: [ ]
-      parameters:
-        - name: idClient
-          in: path
-          description: Client id
-          required: true
-          schema:
-            type: string
-        - name: date
-          in: query
-          description: Date
-          required: false
-          schema:
-            $ref: '#/components/schemas/Date'
-      responses:
-        200:
-          description: Plan object.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Plan'
-        404:
-          description: Monitor or plan not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFound'
-                
-  /users/monitors/{idMonitor}/clients/{idClient}/plans:
-    post:
-      tags:
-        - Plans
-      summary: Add a client to the plan
-      security:
-        - token: [ ]
-      parameters:
-        - name: idMonitor
-          in: path
-          description: Monitor id
-          required: true
-          schema:
-            type: string
-        - name: idClient
-          in: path
-          description: Client id
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Associate plan
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AddPlanRequest'
-      responses:
-        200:
-          description: Plan has been added to the client
-        400:
-          description: Invalid request body
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequest'
-        404:
-          description: Monitor, client or plan not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFound'
-                
+                title:
+                  type: string
+                description:
+                  type: string
+                type:
+                  $ref: '#/components/schemas/ExerciseType'
   /exercises:
     get:
-      tags: 
-        - Exercises
-      summary: Searchs exercises
-      security:
-        - token: [ ]
-      parameters:
-        - name: exerciseType
-          in: query
-          description: Type of exercises to search
-          required: false
-          schema:
-            type: string
-        - name: skip
-          in: query
-          description: Number of exercises to skip
-          required: false
-          schema:
-            type: integer
-            default: 0
-        - name: limit
-          in: query
-          description: Number of exercises that are returned
-          required: false
-          schema:
-            type: integer
-            default: 10
+      tags:
+      - Exercises
+      summary: Get exercises
+      operationId: get_exercises
+      description: Public catalogue with skip=0 and limit=10 by default. exerciseType is a case-sensitive substring
+        filter over enum names; an unrecognized value currently returns the unfiltered catalogue.
+      security: []
       responses:
-        200:
-          description: List of exercises
+        '200':
+          description: Success.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ExercisesInfo'
-                
-  /exercises/{idExercise}:
-    get:
-      tags: 
-        - Exercises
-      summary: Gets an exercise information by id
-      security:
-        - token: [ ]
+                $ref: '#/components/schemas/ListOfExercisesInfo'
+              example:
+                exercises:
+                - id: 73a20000-cc31-4c29-9000-000000000001
+                  title: Wrist Flexion
+                  description: Support the forearm, palm down. Flex, hold and return to neutral.
+                  type: Forearms
+                  supportsCamera: true
+                  supportsSensors: true
+                  cameraJoint: WRIST
+                  cameraMovement: FLEXION
+                  raiseThreshold: 30.0
+                  lowerThreshold: 5.0
+                  minRaiseTimeMs: 1000
+                  holdTimeMs: 5000
+                  cooldownMs: 1000
+                  minMovementSpeed: 0.0
+                  minPitch: -20.0
+                  maxPitch: 20.0
+                  minRoll: -10.0
+                  maxRoll: 60.0
+                  useRoll: true
+                  movementDirection: 1
+        '400':
+          $ref: '#/components/responses/Error400'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
       parameters:
-        - name: idExercise
-          in: path
-          description: Exercise id
-          required: true
-          schema:
-            type: string
+      - name: joint
+        in: query
+        required: false
+        description: Filter the full catalogue by joint before pagination; can be combined with exerciseType.
+        schema:
+          type: string
+          enum: [WRIST, ELBOW, KNEE]
+      - name: exerciseType
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+  /exercises/{exerciseID}:
+    get:
+      tags:
+      - Exercises
+      summary: Get exercise info
+      operationId: get_exercises_exerciseID
+      description: Get exercise info.
+      security: []
       responses:
-        200:
-          description: Exercise object.
+        '200':
+          description: Success.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExerciseInfo'
-        404:
-          description: Exercise not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFound'
-                
-  /users/clients/{idClient}/exercises:
+              example:
+                id: 73a20000-cc31-4c29-9000-000000000001
+                title: Wrist Flexion
+                description: Support the forearm, palm down. Flex, hold and return to neutral.
+                type: Forearms
+                supportsCamera: true
+                supportsSensors: true
+                cameraJoint: WRIST
+                cameraMovement: FLEXION
+                raiseThreshold: 30.0
+                lowerThreshold: 5.0
+                minRaiseTimeMs: 1000
+                holdTimeMs: 5000
+                cooldownMs: 1000
+                minMovementSpeed: 0.0
+                minPitch: -20.0
+                maxPitch: 20.0
+                minRoll: -10.0
+                maxRoll: 60.0
+                useRoll: true
+                movementDirection: 1
+        '400':
+          $ref: '#/components/responses/Error400'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: exerciseID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Catalogue exercise UUID.
+  /exercises/{exerciseID}/video:
     get:
-      tags: 
-        - Exercises
-      summary: Gets daily exercises in a day of a client
-      security:
-        - token: [ ]
-      parameters:
-        - name: idClient
-          in: path
-          description: Client id
-          required: true
-          schema:
-            type: string
-        - name: date
-          in: query
-          description: Daily Exercises date
-          required: false
-          schema:
-            $ref: '#/components/schemas/Date'
-        - name: skip
-          in: query
-          description: Number of exercises to skip
-          required: false
-          schema:
-            type: integer
-            default: 0
-        - name: limit
-          in: query
-          description: Number of exercises that are returned
-          required: false
-          schema:
-            type: integer
-            default: 10
+      tags:
+      - Exercises
+      summary: Get exercise video
+      operationId: get_exercises_exerciseID_video
+      description: Get exercise video.
+      security: []
       responses:
-        200:
-          description: Exercises of a client
+        '200':
+          description: Success.
+          content:
+            video/mp4:
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/Error400'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: exerciseID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Catalogue exercise UUID.
+  /users/patients/{patientID}/plans/{planID}/daily_lists/{dailyListID}/exercises/{exerciseID}:
+    get:
+      tags:
+      - Execution
+      summary: Get patient video of exercise
+      operationId: get_users_patients_patientID_plans_planID_daily_lists_dailyListID_exercises_exerciseID
+      description: 'Returns video/mp4 for a camera result; a sensor-only result does not have a video. Authorization:
+        authenticated user; ownership/relationship checks apply where relevant.'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            video/mp4:
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: patientID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      - name: planID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assignment snapshot plan ID.
+      - name: dailyListID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Resource identifier.
+      - name: exerciseID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assigned daily-exercise ID, not the catalogue UUID.
+      - name: set
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int32
+    post:
+      tags:
+      - Execution
+      summary: Post video of exercise
+      operationId: post_users_patients_patientID_plans_planID_daily_lists_dailyListID_exercises_exerciseID
+      description: 'Camera video submission for a prescribed set. Required parts: video and set. Optional metadata
+        parts match the names below, including case-sensitive feedBack. Returns 204 with no body. Authorization:
+        patient owner (or assigned physiotherapist on shared result/profile routes).'
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No content.
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: patientID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      - name: planID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assignment snapshot plan ID.
+      - name: dailyListID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Resource identifier.
+      - name: exerciseID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assigned daily-exercise ID, not the catalogue UUID.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+              - video
+              - set
+              properties:
+                video:
+                  type: string
+                  format: binary
+                set:
+                  type: integer
+                  format: int32
+                feedBack:
+                  type: string
+                executionMode:
+                  type: string
+                withLoad:
+                  type: boolean
+                loadValue:
+                  type: number
+                  format: float
+                  minimum: 0
+                  exclusiveMinimum: true
+                  description: Positive external weight in kg, required when withLoad is true; omitted otherwise.
+                loadUnit:
+                  type: string
+                  enum: [kg]
+                  description: Required as kg when withLoad is true; omitted otherwise.
+                executionScore:
+                  type: string
+  /users/patients/{patientID}/plans/{planID}/daily_lists/{dailyListID}/exercises/{exerciseID}/feedback:
+    get:
+      tags:
+      - Execution
+      summary: Get video feed back
+      operationId: get_users_patients_patientID_plans_planID_daily_lists_dailyListID_exercises_exerciseID_feedback
+      description: 'Get video feed back. Authorization: authenticated user; ownership/relationship checks apply
+        where relevant.'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Success.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateDailyList'
-                
-  /users/clients/{idClient}/plans/{idPlan}/daily_lists/{idDailyList}/exercises/{idDailyExercise}/feedback:
-    post:
-      tags: 
-        - Exercises
-      summary: Gives monitor feedback of a daily exercise
-      security:
-        - token: [ ]
+                $ref: '#/components/schemas/VideoFeedBack'
+              example:
+                patientFeedBack: Example patientFeedBack
+                physiotherapistFeedBack: Example physiotherapistFeedBack
+                executionMode: camera
+                executionScore: Example executionScore
+                physiotherapistFeedbackScore: '4'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
       parameters:
-        - name: idClient
-          in: path
-          description: Client id
-          required: true
-          schema:
-            type: string
-        - name: idPlan
-          in: path
-          description: Plan id
-          required: true
-          schema:
-            type: integer
-        - name: idDailyList
-          in: path
-          description: Daily List id
-          required: true
-          schema:
-            type: integer
-        - name: idDailyExercise
-          in: path
-          description: Daily Exercise id
-          required: true
-          schema:
-            type: integer
+      - name: patientID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      - name: planID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assignment snapshot plan ID.
+      - name: dailyListID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Resource identifier.
+      - name: exerciseID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assigned daily-exercise ID, not the catalogue UUID.
+      - name: set
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int32
+    post:
+      tags:
+      - Execution
+      summary: Post feedback
+      operationId: post_users_patients_patientID_plans_planID_daily_lists_dailyListID_exercises_exerciseID_feedback
+      description: 'Feedback for an existing camera or sensor set; only the assigned physiotherapist may submit.
+        Authorization: physiotherapist.'
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No content.
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: patientID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      - name: planID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assignment snapshot plan ID.
+      - name: dailyListID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Resource identifier.
+      - name: exerciseID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assigned daily-exercise ID, not the catalogue UUID.
       requestBody:
-        description: Exercise feedback to a daily exercise of a client
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ExerciseFeedbackRequest'
-      responses:
-        200:
-          description: Feedback was submitted
+              $ref: '#/components/schemas/FeedbackInput'
+            example:
+              set: 1
+              feedback: Keep the forearm supported.
+              feedbackScore: '4'
+  /users/patients/{patientID}/plans:
     get:
-      tags: 
-        - Exercises
-      summary: Gets feedback of a daily exercise
+      tags:
+      - Plans
+      summary: Get plan of patient containing date
+      operationId: get_users_patients_patientID_plans
+      description: 'Returns the assignment containing date (server current date if omitted). Use the returned plan/daily-list/exercise
+        IDs for profiles, progress and results. Authorization: authenticated user; ownership/relationship checks
+        apply where relevant.'
       security:
-        - token: [ ]
-      parameters:
-        - name: idClient
-          in: path
-          description: Client id
-          required: true
-          schema:
-            type: string
-        - name: idPlan
-          in: path
-          description: Plan id
-          required: true
-          schema:
-            type: integer
-        - name: idDailyList
-          in: path
-          description: Daily List id
-          required: true
-          schema:
-            type: integer
-        - name: idDailyExercise
-          in: path
-          description: Daily Exercise id
-          required: true
-          schema:
-            type: integer
-        - name: set
-          in: query
-          description: Exercise set number
-          required: true
-          schema:
-            type: string
-            example: 1
+      - bearerAuth: []
       responses:
-        200:
-          description: Client and Monitor feedbacks of exercise
+        '200':
+          description: Success.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ExerciseFeedback'
+                $ref: '#/components/schemas/PlanOutput'
+              example:
+                id: 1
+                title: Wrist rehabilitation
+                startDate: '2026-09-20'
+                dailyLists:
+                - id: 1
+                  exercises:
+                  - id: 1
+                    exerciseInfoID: 10000000-0000-4000-8000-000000000001
+                    title: Wrist rehabilitation
+                    description: Example description
+                    type: Example type
+                    sets: 1
+                    reps: 1
+                    isDone: true
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: patientID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      - name: date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+  /users/patients/{patientID}/plans/{planID}/daily_lists/{dailyListID}/exercises/{exerciseID}/sensor/progress:
+    get:
+      tags:
+      - Execution
+      summary: Get completed exercise sets
+      operationId: get_users_patients_patientID_plans_planID_daily_lists_dailyListID_exercises_exerciseID_sensor_progress
+      description: 'Returns completed set numbers across BOTH camera and sensor sessions for this assigned exercise.
+        Authorization: authenticated user; ownership/relationship checks apply where relevant. This is a supported
+        alias; the corresponding physiotherapist/shared-profile route has identical behavior.'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Progress'
+              example:
+                completedSets:
+                - 1
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: patientID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      - name: planID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assignment snapshot plan ID.
+      - name: dailyListID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Resource identifier.
+      - name: exerciseID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assigned daily-exercise ID, not the catalogue UUID.
+  /users/patients/{patientID}/plans/{planID}/daily_lists/{dailyListID}/exercises/{exerciseID}/progress:
+    get:
+      tags:
+      - Execution
+      summary: Get completed exercise sets
+      operationId: get_users_patients_patientID_plans_planID_daily_lists_dailyListID_exercises_exerciseID_progress
+      description: 'Returns completed set numbers across BOTH camera and sensor sessions for this assigned exercise.
+        Authorization: authenticated user; ownership/relationship checks apply where relevant.'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Progress'
+              example:
+                completedSets:
+                - 1
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: patientID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      - name: planID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assignment snapshot plan ID.
+      - name: dailyListID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Resource identifier.
+      - name: exerciseID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assigned daily-exercise ID, not the catalogue UUID.
+  /users/patients/{patientID}/plans/{planID}/daily_lists/{dailyListID}/exercises/{exerciseID}/sensor/profile:
+    get:
+      tags:
+      - Execution
+      summary: Get effective exercise profile
+      operationId: get_users_patients_patientID_plans_planID_daily_lists_dailyListID_exercises_exerciseID_sensor_profile
+      description: 'Returns the effective profile shared by camera and sensors: assignment/day override, legacy
+        assignment override, plan-day override, then catalogue defaults. The patient or assigned physiotherapist
+        may read. Returns 400 if no complete valid profile can be resolved. Authorization: authenticated user; ownership/relationship
+        checks apply where relevant. This is a supported alias; the corresponding physiotherapist/shared-profile
+        route has identical behavior.'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorProfile'
+              example:
+                raiseThreshold: 30.0
+                lowerThreshold: 5.0
+                minRaiseTimeMs: 1000
+                holdTimeMs: 5000
+                cooldownMs: 1000
+                minMovementSpeed: 0.0
+                minPitch: -20.0
+                maxPitch: 20.0
+                minRoll: -10.0
+                maxRoll: 60.0
+                useRoll: true
+                movementDirection: 1
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: patientID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      - name: planID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assignment snapshot plan ID.
+      - name: dailyListID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Resource identifier.
+      - name: exerciseID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assigned daily-exercise ID, not the catalogue UUID.
+    post:
+      tags:
+      - Execution
+      summary: Save assigned exercise profile
+      operationId: post_users_patients_patientID_plans_planID_daily_lists_dailyListID_exercises_exerciseID_sensor_profile
+      description: 'Saves an override only for this assigned daily exercise. Requires the assigned physiotherapist.
+        Targets/timings affect both camera and sensors. Returns the saved profile. Authorization: assigned physiotherapist.'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorProfile'
+              example:
+                raiseThreshold: 30.0
+                lowerThreshold: 5.0
+                minRaiseTimeMs: 1000
+                holdTimeMs: 5000
+                cooldownMs: 1000
+                minMovementSpeed: 0.0
+                minPitch: -20.0
+                maxPitch: 20.0
+                minRoll: -10.0
+                maxRoll: 60.0
+                useRoll: true
+                movementDirection: 1
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: patientID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      - name: planID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assignment snapshot plan ID.
+      - name: dailyListID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Resource identifier.
+      - name: exerciseID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assigned daily-exercise ID, not the catalogue UUID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensorProfile'
+            example:
+              raiseThreshold: 30.0
+              lowerThreshold: 5.0
+              minRaiseTimeMs: 1000
+              holdTimeMs: 5000
+              cooldownMs: 1000
+              minMovementSpeed: 0.0
+              minPitch: -20.0
+              maxPitch: 20.0
+              minRoll: -10.0
+              maxRoll: 60.0
+              useRoll: true
+              movementDirection: 1
+  /users/patients/{patientID}/plans/{planID}/daily_lists/{dailyListID}/exercises/{exerciseID}/profile:
+    get:
+      tags:
+      - Execution
+      summary: Get effective exercise profile
+      operationId: get_users_patients_patientID_plans_planID_daily_lists_dailyListID_exercises_exerciseID_profile
+      description: 'Returns the effective profile shared by camera and sensors: assignment/day override, legacy
+        assignment override, plan-day override, then catalogue defaults. The patient or assigned physiotherapist
+        may read. Returns 400 if no complete valid profile can be resolved. Authorization: authenticated user; ownership/relationship
+        checks apply where relevant.'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorProfile'
+              example:
+                raiseThreshold: 30.0
+                lowerThreshold: 5.0
+                minRaiseTimeMs: 1000
+                holdTimeMs: 5000
+                cooldownMs: 1000
+                minMovementSpeed: 0.0
+                minPitch: -20.0
+                maxPitch: 20.0
+                minRoll: -10.0
+                maxRoll: 60.0
+                useRoll: true
+                movementDirection: 1
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: patientID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      - name: planID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assignment snapshot plan ID.
+      - name: dailyListID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Resource identifier.
+      - name: exerciseID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assigned daily-exercise ID, not the catalogue UUID.
+  /users/patients/{patientID}/plans/{planID}/daily_lists/{dailyListID}/exercises/{exerciseID}/sensor/profile/defaults:
+    post:
+      tags:
+      - Execution
+      summary: Restore catalogue defaults
+      operationId: post_users_patients_patientID_plans_planID_daily_lists_dailyListID_exercises_exerciseID_sensor_profile_defaults
+      description: 'Restores catalogue defaults for this assigned exercise/day, bypassing the plan override. Other
+        days and assignments are unchanged. No request body; returns the effective profile. Fails with 400 if catalogue
+        defaults are incomplete. Authorization: assigned physiotherapist.'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorProfile'
+              example:
+                raiseThreshold: 30.0
+                lowerThreshold: 5.0
+                minRaiseTimeMs: 1000
+                holdTimeMs: 5000
+                cooldownMs: 1000
+                minMovementSpeed: 0.0
+                minPitch: -20.0
+                maxPitch: 20.0
+                minRoll: -10.0
+                maxRoll: 60.0
+                useRoll: true
+                movementDirection: 1
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: patientID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      - name: planID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assignment snapshot plan ID.
+      - name: dailyListID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Resource identifier.
+      - name: exerciseID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assigned daily-exercise ID, not the catalogue UUID.
+  /users/patients/{patientID}/plans/{planID}/daily_lists/{dailyListID}/exercises/{exerciseID}/sensor:
+    post:
+      tags:
+      - Execution
+      summary: Save sensor session
+      operationId: post_users_patients_patientID_plans_planID_daily_lists_dailyListID_exercises_exerciseID_sensor
+      description: 'Saves one completed sensor set, returning HTTP 200 (including an identical retry). The authenticated
+        user must be the patient. sessionId and the entire payload must remain unchanged when retrying. A different
+        result for the same set returns 409. Authorization: authenticated user; ownership/relationship checks apply
+        where relevant.'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorSessionInput'
+              example:
+                sessionId: 20000000-0000-4000-8000-000000000001
+                set: 1
+                repetitions: 10
+                durationMs: 60000
+                samples:
+                - elapsedMs: 0
+                  pitch: 0.0
+                  roll: 0.0
+                  velocity: 0.0
+                - elapsedMs: 1000
+                  pitch: 1.0
+                  roll: 30.0
+                  velocity: 5.0
+                profile:
+                  raiseThreshold: 30.0
+                  lowerThreshold: 5.0
+                  minRaiseTimeMs: 1000
+                  holdTimeMs: 5000
+                  cooldownMs: 1000
+                  minMovementSpeed: 0.0
+                  minPitch: -20.0
+                  maxPitch: 20.0
+                  minRoll: -10.0
+                  maxRoll: 60.0
+                  useRoll: true
+                  movementDirection: 1
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: patientID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      - name: planID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assignment snapshot plan ID.
+      - name: dailyListID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Resource identifier.
+      - name: exerciseID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assigned daily-exercise ID, not the catalogue UUID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensorSessionInput'
+            example:
+              sessionId: 20000000-0000-4000-8000-000000000001
+              set: 1
+              repetitions: 10
+              durationMs: 60000
+              samples:
+              - elapsedMs: 0
+                pitch: 0.0
+                roll: 0.0
+                velocity: 0.0
+              - elapsedMs: 1000
+                pitch: 1.0
+                roll: 30.0
+                velocity: 5.0
+              profile:
+                raiseThreshold: 30.0
+                lowerThreshold: 5.0
+                minRaiseTimeMs: 1000
+                holdTimeMs: 5000
+                cooldownMs: 1000
+                minMovementSpeed: 0.0
+                minPitch: -20.0
+                maxPitch: 20.0
+                minRoll: -10.0
+                maxRoll: 60.0
+                useRoll: true
+                movementDirection: 1
+    get:
+      tags:
+      - Execution
+      summary: Get sensor session
+      operationId: get_users_patients_patientID_plans_planID_daily_lists_dailyListID_exercises_exerciseID_sensor
+      description: 'Reads the stored sensor result, including its historical profile snapshot when supplied. Authorization:
+        authenticated user; ownership/relationship checks apply where relevant.'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorSessionInput'
+              example:
+                sessionId: 20000000-0000-4000-8000-000000000001
+                set: 1
+                repetitions: 10
+                durationMs: 60000
+                samples:
+                - elapsedMs: 0
+                  pitch: 0.0
+                  roll: 0.0
+                  velocity: 0.0
+                - elapsedMs: 1000
+                  pitch: 1.0
+                  roll: 30.0
+                  velocity: 5.0
+                profile:
+                  raiseThreshold: 30.0
+                  lowerThreshold: 5.0
+                  minRaiseTimeMs: 1000
+                  holdTimeMs: 5000
+                  cooldownMs: 1000
+                  minMovementSpeed: 0.0
+                  minPitch: -20.0
+                  maxPitch: 20.0
+                  minRoll: -10.0
+                  maxRoll: 60.0
+                  useRoll: true
+                  movementDirection: 1
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: patientID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      - name: planID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assignment snapshot plan ID.
+      - name: dailyListID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Resource identifier.
+      - name: exerciseID
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Assigned daily-exercise ID, not the catalogue UUID.
+      - name: set
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int32
+  /users/patients:
+    post:
+      tags:
+      - Patients
+      summary: Register patient
+      operationId: post_users_patients
+      description: Register patient.
+      security: []
+      responses:
+        '201':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialsOutput'
+              example:
+                id: 10000000-0000-4000-8000-000000000001
+                accessToken: <accessToken>
+                refreshToken: <refreshToken>
+        '400':
+          $ref: '#/components/responses/Error400'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterPatientInput'
+            example:
+              name: Example Patient
+              email: patient@example.test
+              password: Example-password1@
+              birthDate: '1995-01-01'
+              weight: 70
+              height: 175
+              physicalCondition: Wrist rehabilitation
+  /users/patients/{patientID}/profile/photo:
+    post:
+      tags:
+      - Patients
+      summary: Add profile picture
+      operationId: post_users_patients_patientID_profile_photo
+      description: 'Add profile picture. Authorization: patient owner (or assigned physiotherapist on shared result/profile
+        routes).'
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          description: Success.
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: patientID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+              - photo
+              properties:
+                photo:
+                  type: string
+                  format: binary
+  /users/patients/{patientID}/profile:
+    get:
+      tags:
+      - Patients
+      summary: Patient profile
+      operationId: get_users_patients_patientID_profile
+      description: 'Patient profile. Authorization: patient owner (or assigned physiotherapist on shared result/profile
+        routes).'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientOutput'
+              example:
+                id: 10000000-0000-4000-8000-000000000001
+                name: Example Patient
+                email: patient@example.test
+                weight: 1
+                height: 1
+                physicalCondition: Example physicalCondition
+                birthDate: '2026-09-20'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: patientID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+  /users/patients/{patientID}/exercises:
+    get:
+      tags:
+      - Patients
+      summary: Get exercises of patient
+      operationId: get_users_patients_patientID_exercises
+      description: 'Get exercises of patient. Authorization: patient owner (or assigned physiotherapist on shared
+        result/profile routes).'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListOfExercisesOfPatient'
+              example:
+                exercises:
+                - exerciseInfoID: 73a20000-cc31-4c29-9000-000000000001
+                  sets: 2
+                  reps: 10
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: patientID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
+      - name: date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+  /users/login:
+    post:
+      tags:
+      - Users
+      summary: Login
+      operationId: post_users_login
+      description: Returns the current role and a pair of tokens. Use accessToken as Bearer authorization; refreshToken
+        is only sent to /users/refresh.
+      security: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginOutput'
+              example:
+                id: 10000000-0000-4000-8000-000000000001
+                accessToken: <accessToken>
+                refreshToken: <refreshToken>
+                name: Example Patient
+                role: PATIENT
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '404':
+          $ref: '#/components/responses/Error404'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginInput'
+            example:
+              email: patient@example.test
+              password: Example-password1@
+  /users/refresh:
+    post:
+      tags:
+      - Users
+      summary: Refresh token
+      operationId: post_users_refresh
+      description: Returns a replacement token pair with HTTP 201. No Bearer token is required.
+      security: []
+      responses:
+        '201':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PairOfTokens'
+              example:
+                accessToken: <accessToken>
+                refreshToken: <refreshToken>
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '404':
+          $ref: '#/components/responses/Error404'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenInput'
+            example:
+              refreshToken: <refresh-token>
+  /users/subscribe:
+    get:
+      tags:
+      - Users
+      summary: Subscribe to server send events
+      operationId: get_users_subscribe
+      description: 'Long-lived SSE connection for the authenticated user. Response Content-Type: text/event-stream.
+        Send Accept: */* (or application/json, as the Android app does): the current controller declares JSON/image
+        media types, so an exclusive Accept: text/event-stream can be rejected during Spring route negotiation.
+        The event id is the emitter class name; JSON data includes RequestPhysiotherapist, RequestAcceptance, PostedVideo,
+        PhysiotherapistFeedBack, PlanAssociation, CredentialAcceptance and RatePhysiotherapist. An initial acceptance
+        event is sent. Open manually or opt in using runStreaming in Postman; normal Runner execution skips this
+        indefinite stream. Authorization: authenticated user; ownership/relationship checks apply where relevant.'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            text/event-stream:
+              schema:
+                type: string
+              example: 'id: PostedVideo
 
+                data: {"patientID":"10000000-0000-4000-8000-000000000001","name":"Example Patient","exerciseID":1}
+
+
+                '
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+  /users/unsubscribe:
+    post:
+      tags:
+      - Users
+      summary: Unsubscribe to server send events
+      operationId: post_users_unsubscribe
+      description: 'Unsubscribe to server send events. Authorization: authenticated user; ownership/relationship
+        checks apply where relevant.'
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No content.
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+  /users/{userID}/photo:
+    get:
+      tags:
+      - Users
+      summary: Get photo of user
+      operationId: get_users_userID_photo
+      description: 'Get photo of user. Authorization: authenticated user; ownership/relationship checks apply where
+        relevant.'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Success.
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+      parameters:
+      - name: userID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Resource identifier.
 components:
-
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
-    CreateUserRequest:
+    AllPhysiotherapistsAvailableOutput:
       type: object
-      required:
-        - name
-        - email
-        - password
       properties:
+        physiotherapists:
+          type: array
+          items:
+            $ref: '#/components/schemas/PhysiotherapistAvailable'
+      required:
+      - physiotherapists
+    ListOfUnverifiedPhysiotherapists:
+      type: object
+      properties:
+        physiotherapists:
+          type: array
+          items:
+            $ref: '#/components/schemas/PhysiotherapistInfo'
+      required:
+      - physiotherapists
+    PhysiotherapistAvailable:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
         name:
           type: string
-          description: User name
-          example: Test1
         email:
           type: string
-          description: User email
-          example: user1@gmail.com
-        password:
-          type: string
-          description: User password
-          example: "@Password1"
-    
-    LoginUserRequest:
-      type: object
+        rating:
+          oneOf:
+          - $ref: '#/components/schemas/Rating'
+          - type: object
+            nullable: true
+            enum:
+            - null
+        requested:
+          type: boolean
       required:
-        - email
-        - password
-      properties:
-        email:
-          type: string
-          description: User email
-          example: user1@gmail.com
-        password:
-          type: string
-          description: User password
-          example: "@Password1"
-          
-    RefreshUserRequest:
+      - id
+      - name
+      - email
+      - requested
+    PhysiotherapistDetails:
       type: object
-      required:
-        - refreshToken
       properties:
-        refreshToken:
+        id:
           type: string
-          description: User refresh token
-          example: eyJhbGciOiJIUzUxMiJ9.eyJzZXNzaW9uSUQiOiJmMmU4ODIwNC1iNTdmLTQxNDAtOTMwNC03YTQ3NDc5OGE4NDEiLCJleHAiOjE2ODkwNTAzOTJ9.rF6Z-DnG3Ta4wtx_fTsAiqIYoDwD7qdYy8BEjciB-VUmNuLhiMvyohKFada8qT9H2Vf9LIZLKFbufQwF4xnUYQ
-          
-    CreateClientRequest:
-      type: object
-      required:
-        - name
-        - email
-        - password
-        - weight
-        - height
-        - birthDate
-        - physicalCondition
-      properties:
+          format: uuid
         name:
           type: string
-          description: Client name
-          example: Client1
         email:
           type: string
-          description: Client email
-          example: client1@gmail.com
-        password:
+      required:
+      - id
+      - name
+      - email
+    PhysiotherapistFeedBack:
+      type: object
+      properties:
+        feedBack:
           type: string
-          description: Client password
-          example: "@Password1"
+      required:
+      - feedBack
+    PhysiotherapistInfo:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+      required:
+      - id
+      - name
+    PhysiotherapistOutput:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+        rating:
+          $ref: '#/components/schemas/Rating'
+        hasRated:
+          type: boolean
+          description: Whether the authenticated patient has already rated this physiotherapist.
+      required:
+      - id
+      - name
+      - email
+      - rating
+    PhysiotherapistProfile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+        rating:
+          $ref: '#/components/schemas/Rating'
+        docState:
+          type: string
+          nullable: true
+          enum:
+          - invalid
+          - waiting
+          - valid
+          - null
+      required:
+      - id
+      - name
+      - email
+      - rating
+    PatientOfPhysiotherapist:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
         weight:
           type: integer
-          description: Client weight
-          example: 70
+          format: int32
+          nullable: true
         height:
           type: integer
-          description: Client height
-          example: 184
-        birthDate:
-          $ref: '#/components/schemas/Date'
+          format: int32
+          nullable: true
         physicalCondition:
           type: string
-          description: Client physical condition
-          example: knee injury
-          
-    DecideMonitorValidationRequest:
-      type: object
-      required:
-        - accept
-      properties:
-        accept:
-          type: boolean
-          description: Decision of accept or decline the monitor credential
-          example: true
-          
-    DecideClientConnectionRequest:
-      type: object
-      required:
-        - accept
-      properties:
-        accept:
-          type: boolean
-          description: Decision of accept or decline the client connection request
-          example: true
-          
-    ClientConnectionRequest:
-      type: object
-      required:
-        - clientID
-        - text
-      properties:
-        clientID:
+          nullable: true
+        birthDate:
           type: string
-          description: Client id
-          example: a568d547-fdca-49e1-b3a9-8e8cd9948c1f
-        text:
-          type: string
-          description: Request message
-          example: Help me please
-          
-    RateMonitorRequest:
-      type: object
-      required:
-        - user
-        - rating
-      properties:
-        user:
-          type: string
-          description: Client id
-          example: a568d547-fdca-49e1-b3a9-8e8cd9948c1f
-        rating:
-          type: integer
-          description: Monitor rating from 1 to 5
-          example: 4
-          
-    CreatePlanRequest:
-      type: object
-      required:
-        - title
-        - dailyLists
-      properties:
-        title:
-          type: string
-          description: Plan title
-          example: Plan Test
-        dailyLists:
-          type: array
-          items: 
-            $ref: '#/components/schemas/CreateDailyList'
-            
-    AddPlanRequest:
-      type: object
-      required:
-        - planID
-        - startDate
-      properties:
-        planID:
-          type: integer
-          description: Plan title
-          example: 1
-        startDate:
-          $ref: '#/components/schemas/Date'
-          
-    ExerciseFeedbackRequest:
-      type: object
-      required:
-        - set
-        - feedback
-      properties:
-        set:
-          type: integer
-          description: Set number of exercise
-          example: 1
-        feedback:
-          type: string
-          description: Feedback of exercise
-          example: Good job!
-
-    CreateUserResponse:
-      type: object
-      required:
-        - id
-        - accessToken
-        - refreshToken
-      properties:
-        id:
-          type: string
-          description: User id
-          example: a568d547-fdca-49e1-b3a9-8e8cd9948c1f
-        accessToken:
-          type: string
-          description: Generated access token
-          example: eyJhbGciOiJIUzUxMiJ9.eyJ1c2VySUQiOiJhNTY4ZDU0Ny1mZGNhLTQ5ZTEtYjNhOS04ZThjZDk5NDhjMWYiLCJyb2xlIjoiQURNSU4iLCJzZXNzaW9uSUQiOiIwYjljZWJjNy1mZDQ2LTQ3MjItYTE5YS0wMmY1NTZmODk5ODAiLCJleHAiOjE2ODkxMTA5MDB9.-UJAfdHrmHakPVo6UELig594OWxR2b2k4A9R_b32IH-jNO7Y3ETKIrWFqAKrZBBmvlzhohH2hLWqQXiHFw3VTA
-        refershToken:
-          type: string
-          description: Generated refresh token
-          example: eyJhbGciOiJIUzUxMiJ9.eyJzZXNzaW9uSUQiOiIwYjljZWJjNy1mZDQ2LTQ3MjItYTE5YS0wMmY1NTZmODk5ODAiLCJleHAiOjE2ODkxMTA5MDB9.-vC012ExLsIQIFIon-nUZIbA-ParjXEXygD6qkyuNIvOgvhV5Orw8e02ogl3fMGh89CcJlegCNtD5CI3JlG22g
-    
-    LoginUserResponse:
-      type: object
-      required:
-        - id
-        - accessToken
-        - refreshToken
-        - name
-        - role
-      properties:
-        id:
-          type: string
-          description: User id
-          example: 78d82d8d-36a5-4f15-bc71-b846887555fe
-        accessToken:
-          type: string
-          description: User access token
-          example: eyJhbGciOiJIUzUxMiJ9.eyJ1c2VySUQiOiI3OGQ4MmQ4ZC0zNmE1LTRmMTUtYmM3MS1iODQ2ODg3NTU1ZmUiLCJyb2xlIjoiTU9OSVRPUiIsInNlc3Npb25JRCI6ImYyZTg4MjA0LWI1N2YtNDE0MC05MzA0LTdhNDc0Nzk4YTg0MSIsImV4cCI6MTY4OTA1MDM5Mn0.M7lT-aCgYU3O6XY2AKNzD4GoFPh2i570qem3gMg89BZW1XX9bfmPORGTHr5PEwNHzhj6O48ZL-GhP6d3fXGEYQ
-        refreshToken:
-          type: string
-          description: User refresh token
-          example: eyJhbGciOiJIUzUxMiJ9.eyJzZXNzaW9uSUQiOiJmMmU4ODIwNC1iNTdmLTQxNDAtOTMwNC03YTQ3NDc5OGE4NDEiLCJleHAiOjE2ODkwNTAzOTJ9.rF6Z-DnG3Ta4wtx_fTsAiqIYoDwD7qdYy8BEjciB-VUmNuLhiMvyohKFada8qT9H2Vf9LIZLKFbufQwF4xnUYQ
-        name:
-          type: string
-          description: Username
-          example: user1
-        role:
-          type: string
-          description: Role of user
-          example: CLIENT
-          
-    RefreshUserResponse:
-      type: object
-      required:
-        - accessToken
-        - refreshToken
-      properties:
-        accessToken:
-          type: string
-          description: User access token
-          example: eyJhbGciOiJIUzUxMiJ9.eyJ1c2VySUQiOiI3OGQ4MmQ4ZC0zNmE1LTRmMTUtYmM3MS1iODQ2ODg3NTU1ZmUiLCJyb2xlIjoiTU9OSVRPUiIsInNlc3Npb25JRCI6ImYyZTg4MjA0LWI1N2YtNDE0MC05MzA0LTdhNDc0Nzk4YTg0MSIsImV4cCI6MTY4OTA1MDM5Mn0.M7lT-aCgYU3O6XY2AKNzD4GoFPh2i570qem3gMg89BZW1XX9bfmPORGTHr5PEwNHzhj6O48ZL-GhP6d3fXGEYQ
-        refreshToken:
-          type: string
-          description: User refresh token
-          example: eyJhbGciOiJIUzUxMiJ9.eyJzZXNzaW9uSUQiOiJmMmU4ODIwNC1iNTdmLTQxNDAtOTMwNC03YTQ3NDc5OGE4NDEiLCJleHAiOjE2ODkwNTAzOTJ9.rF6Z-DnG3Ta4wtx_fTsAiqIYoDwD7qdYy8BEjciB-VUmNuLhiMvyohKFada8qT9H2Vf9LIZLKFbufQwF4xnUYQ
-          
-    MonitorRequestsResponse:
-      type: object
-      required:
-        - requests
-      properties:
-        requests:
-          type: array
-          items: 
-            $ref: '#/components/schemas/Request'
-            
-    CreateRequestResponse:
-      type: object
-      required:
-        - requestID
-      properties:
-        requestID:
-          type: string
-          description: Request id
-          example: 1aa4d7ab-aa53-496d-a0b6-aaaf007e560b
-            
-    MonitorClientsResponse:
-      type: object
-      required:
-        - clients
-      properties:
-        clients:
-          type: array
-          items: 
-            $ref: '#/components/schemas/User'
-          
-    MonitorsUnverifiedResponse:
-      type: object
-      required:
-        - monitors
-      properties:
-        monitors:
-          type: array
-          items:
-            $ref: '#/components/schemas/MonitorUnverified'
-
-    MonitorsAvailableResponse:
-      type: object
-      required:
-        - monitors
-      properties:
-        monitors:
-          type: array
-          items:
-            $ref: '#/components/schemas/MonitorAvailable'
-            
-    MonitorClientsExercisesResponse:
-      type: object
-      required:
-        - clientsExercises
-      properties:
-        clientsExercises:
-          type: array
-          items: 
-            $ref: '#/components/schemas/ClientExercises'
-            
-    CreatePlanResponse:
-      type: object
-      required:
-        - id
-      properties:
-        id:
-          type: integer
-          description: Plan id
-          example: 1
-            
-    PlansInfoResponse:
-      type: object
-      required:
-        - plans
-      properties:
+          format: date
+          nullable: true
         plans:
           type: array
           items:
-            $ref: '#/components/schemas/PlanInfo'
-
-    User:
-      type: object
-      description: User object
+            $ref: '#/components/schemas/PlanOfPatient'
       required:
-        - id
-        - name
-        - email
-      properties:
-        id:
-          type: string
-          description: User id
-          example: 46cd2e8e-ab3d-482a-92c7-a2fce7e15f00
-        name:
-          type: string
-          description: User name
-          example: User Test1
-        email:
-          type: string
-          description: User email
-          example: test1@gmail.com
-          
-    MonitorUnverified:
+      - id
+      - name
+      - email
+      - plans
+    RatePhysiotherapist:
       type: object
-      description: Monitor object
-      required:
-        - id
-        - name
       properties:
-        id:
+        rate:
           type: integer
-          description: Monitor id
-          example: 45586211-be5e-49d1-8252-72c393a1eec6
-        name:
-          type: string
-          description: Monitor name
-          example: Monitor Test1
-          
-    MonitorAvailable:
-      type: object
-      description: Monitor object
+          format: int32
       required:
-        - id
-        - name
-        - email
-        - rating
-        - requested
-      properties:
-        id:
-          type: string
-          description: Monitor id
-          example: 45586211-be5e-49d1-8252-72c393a1eec6
-        name:
-          type: string
-          description: Monitor name
-          example: Monitor Test1
-        email:
-          type: string
-          description: Monitor email
-          example: monitor1@gmail.com
-        rating:
-          type: object
-          description: Rating object
-          properties:
-            averageStarts:
-              type: integer
-              description: Average of monitor ratings
-              example: 4.5
-            nrOfReviews:
-              type: integer
-              description: Total monitor reviews
-              example: 2
-        requested:
-          type: boolean
-          description: Whether a connection request has already been given to this monitor by the client that executed the request
-          example: false
-          
-    MonitorOfClient:
+      - rate
+    RequestPhysiotherapist:
       type: object
-      description: Monitor of client object
-      required:
-        - id
-        - name
-        - email
-        - rating
-      properties:
-        id:
-          type: string
-          description: Monitor id
-          example: 45586211-be5e-49d1-8252-72c393a1eec6
-        name:
-          type: string
-          description: Monitor name
-          example: Monitor Test1
-        email:
-          type: string
-          description: Monitor email
-          example: monitor1@gmail.com
-        rating:
-          type: object
-          description: Rating object
-          properties:
-            averageStarts:
-              type: integer
-              description: Average of monitor ratings
-              example: 4.5
-            nrOfReviews:
-              type: integer
-              description: Total monitor reviews
-              example: 2
-          
-    MonitorProfile:
-      type: object
-      description: Monitor profile object
-      required:
-        - id
-        - name
-        - email
-        - rating
-        - docState
-      properties:
-        id:
-          type: string
-          description: Monitor id
-          example: 45586211-be5e-49d1-8252-72c393a1eec6
-        name:
-          type: string
-          description: Monitor name
-          example: Monitor Test1
-        email:
-          type: string
-          description: Monitor email
-          example: monitor1@gmail.com
-        rating:
-          type: object
-          description: Rating object
-          properties:
-            averageStarts:
-              type: integer
-              description: Average of monitor ratings
-              example: 4.5
-            nrOfReviews:
-              type: integer
-              description: Total monitor reviews
-              example: 2
-        docState:
-          type: string
-          description: Whether the monitor credentials document is valid
-          example: valid
-          
-    ClientProfile:
-      type: object
-      required:
-        - id
-        - name
-        - email
-        - weight
-        - height
-        - birthDate
-        - physicalCondition
-      properties:
-        id:
-          type: string
-          description: Client id
-          example: a568d547-fdca-49e1-b3a9-8e8cd9948c1f
-        name:
-          type: string
-          description: Client name
-          example: Client1
-        email:
-          type: string
-          description: Client email
-          example: client1@gmail.com
-        weight:
-          type: integer
-          description: Client weight
-          example: 70
-        height:
-          type: integer
-          description: Client height
-          example: 184
-        birthDate:
-          $ref: '#/components/schemas/Date'
-        physicalCondition:
-          type: string
-          description: Client physical condition
-          example: knee injury
-
-    ClientExercises:
-      type: object
-      description: Client with his exercises
-      required:
-        - id
-        - name
-        - planId
-        - dailyListId
-        - exercises
-      properties:
-        id:
-          type: string
-          description: Client id
-          example: 46cd2e8e-ab3d-482a-92c7-a2fce7e15f00
-        name:
-          type: string
-          description: Client name
-          example: User Test1
-        planId:
-          type: integer
-          description: Plan id of exercises
-          example: 1
-        dailyListId:
-          type: integer
-          description: Daily List id of exercises
-          example: 1
-        exercises:
-          type: array
-          items: 
-            $ref: '#/components/schemas/DailyExerciseOfClient'
-            
-    ExercisesInfo:
-      type: object
-      description: Exercises Info
-      required:
-        - exercises
-      properties:
-        exercises:
-          type: array
-          items: 
-            $ref: '#/components/schemas/ExerciseInfo'
-
-    Request:
-      type: object
-      description: Request object
-      required:
-        - requestID
-        - requestText
-        - clientID
-        - clientName
-        - clientEmail
       properties:
         requestID:
           type: string
-          description: Request id
-          example: b5c5529e-e4b7-4c7a-88a7-9bcfed61254f
+          format: uuid
+        name:
+          type: string
         requestText:
           type: string
-          description: Request text
-          example: Help me please
-        clientID:
+          nullable: true
+        patientID:
           type: string
-          description: Client id
-          example: fee2ac77-30d5-4fe2-b28d-dc940dd5a3a8
-        clientName:
-          type: string
-          description: Client name
-          example: Client Test
-        clientEmail:
-          type: string
-          description: Client email
-          example: user1@gmail.com
-          
-    CreateDailyList:
-      type: object
-      description: Daily List creation object
+          format: uuid
       required:
-        - exercises
+      - requestID
+      - name
+      - requestText
+      - patientID
+    RequestsOfPhysiotherapist:
+      type: object
+      properties:
+        requests:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequestInformation'
+      required:
+      - requests
+    ConnectionRequest:
+      type: object
+      properties:
+        patientID:
+          type: string
+          format: uuid
+        text:
+          type: string
+          nullable: true
+      required:
+      - patientID
+      example:
+        patientID: 10000000-0000-4000-8000-000000000001
+        text: Please supervise my rehabilitation.
+    CredentialAcceptance:
+      type: object
+      properties:
+        acceptance:
+          type: boolean
+      required:
+      - acceptance
+    CredentialsOutput:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+      required:
+      - id
+      - accessToken
+      - refreshToken
+    DailyExercise:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        exerciseInfoID:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        sets:
+          type: integer
+          format: int32
+        reps:
+          type: integer
+          format: int32
+        isDone:
+          type: boolean
+          nullable: true
+      required:
+      - id
+      - exerciseInfoID
+      - title
+      - description
+      - type
+      - sets
+      - reps
+    DailyListInput:
+      type: object
       properties:
         exercises:
           type: array
-          items: 
-            $ref: '#/components/schemas/CreateDailyExercise'
-          
-    CreateDailyExercise:
-      type: object
-      description: Daily Exercise creation object
-      required:
-        - exerciseInfoID
-        - sets
-        - reps
-      properties:
-        exerciseInfoID:
-          type: string
-          description: Exercise Info id of this exercise
-          example: 40c806c4-d4e7-472f-88f8-ed547e8afd12
-        sets:
-          type: integer
-          description: Exercise number of sets
-          example: 3
-        reps:
-          type: integer
-          description: Exercise number of repetitions 
-          example: 15
-          
-    PlanInfo:
-      type: object
-      description: Plan Info object
-      required:
-        - id
-        - title
-        - days
-      properties:
-        id:
-          type: integer
-          description: Plan id
-          example: 1
-        title:
-          type: string
-          description: Plan title
-          example: Plan Test
-        days:
-          type: integer
-          description: Plan duration
-          example: 7
-          
-    Plan:
-      type: object
-      description: Plan object
-      required:
-        - id
-        - title
-        - dailyLists
-      properties:
-        id:
-          type: integer
-          description: Plan id
-          example: 1
-        title:
-          type: string
-          description: Plan title
-          example: Plan Test
-        dailyLists:
-          type: array
           items:
-            $ref: '#/components/schemas/DailyList'
-          
-    DailyList:
-      type: object
-      description: Daily List object
+            $ref: '#/components/schemas/Exercise'
       required:
-        - id
-        - exercises
+      - exercises
+    DailyListOutput:
+      type: object
       properties:
         id:
           type: integer
-          description: Daily Exercise id
-          example: 1
+          format: int32
         exercises:
           type: array
           items:
             $ref: '#/components/schemas/DailyExercise'
-            
-    DailyExercise:
-      type: object
-      description: Daily Exercise object
       required:
-        - id
-        - exerciseInfoID
-        - title
-        - description
-        - type
-        - sets
-        - reps
-      properties:
-        id:
-          type: integer
-          description: Daily Exercise id
-          example: 1
-        exerciseInfoID:
-          type: string
-          description: Exercise Info id of this exercise
-          example: 40c806c4-d4e7-472f-88f8-ed547e8afd12
-        title:
-          type: string
-          description: Exercise title
-          example: Push ups
-        description:
-          type: string
-          description: Exercise description
-          example: Exercise description
-        type:
-          type: string
-          description: Exercise type
-          example: Chest
-        sets:
-          type: integer
-          description: Exercise number of sets
-          example: 3
-        reps:
-          type: integer
-          description: Exercise number of repetitions 
-          example: 15
-          
-    DailyExerciseOfClient:
+      - id
+      - exercises
+    Decision:
       type: object
-      description: Daily Exercise object
-      required:
-        - id
-        - exerciseInfoID
-        - title
-        - description
-        - type
-        - sets
-        - reps
-        - isDone
       properties:
-        id:
-          type: integer
-          description: Daily Exercise id
-          example: 1
-        exerciseInfoID:
-          type: string
-          description: Exercise Info id of this exercise
-          example: 40c806c4-d4e7-472f-88f8-ed547e8afd12
-        title:
-          type: string
-          description: Exercise title
-          example: Push ups
-        description:
-          type: string
-          description: Exercise description
-          example: Exercise description
-        type:
-          type: string
-          description: Exercise type
-          example: Chest
-        sets:
-          type: integer
-          description: Exercise number of sets
-          example: 3
-        reps:
-          type: integer
-          description: Exercise number of repetitions 
-          example: 15
-        isDone:
+        accept:
           type: boolean
-          description: If the exercise has already been performed by the client, if all the exercise series have already been recorded
-          example: false
-          
+      required:
+      - accept
+      example:
+        accept: true
+    Exercise:
+      type: object
+      properties:
+        exerciseInfoID:
+          type: string
+          format: uuid
+        sets:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 20
+        reps:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 200
+        sensorProfile:
+          oneOf:
+          - $ref: '#/components/schemas/SensorProfile'
+          - type: object
+            nullable: true
+            enum:
+            - null
+          description: Optional per-plan-day override. Omit or null to inherit catalogue defaults. The effective
+            profile is also used by the camera.
+      required:
+      - exerciseInfoID
+      - sets
+      - reps
+      example:
+        exerciseInfoID: 73a20000-cc31-4c29-9000-000000000001
+        sets: 2
+        reps: 10
     ExerciseInfo:
       type: object
-      description: Exercise object
-      required:
-        - id
-        - title
-        - description
-        - type
       properties:
         id:
           type: string
-          description: Exercise Info id
-          example: 40c806c4-d4e7-472f-88f8-ed547e8afd12
+          format: uuid
         title:
           type: string
-          description: Exercise title
-          example: Push ups
         description:
           type: string
-          description: Exercise description
-          example: Exercise description
         type:
+          $ref: '#/components/schemas/ExerciseType'
+        supportsCamera:
+          type: boolean
+          nullable: true
+        supportsSensors:
+          type: boolean
+          nullable: true
+        raiseThreshold:
+          type: number
+          format: float
+          nullable: true
+        lowerThreshold:
+          type: number
+          format: float
+          nullable: true
+        cooldownMs:
+          type: integer
+          format: int32
+          nullable: true
+        minRaiseTimeMs:
+          type: integer
+          format: int32
+          nullable: true
+        holdTimeMs:
+          type: integer
+          format: int32
+          nullable: true
+        minMovementSpeed:
+          type: number
+          format: float
+          nullable: true
+        maxPitch:
+          type: number
+          format: float
+          nullable: true
+        minPitch:
+          type: number
+          format: float
+          nullable: true
+        maxRoll:
+          type: number
+          format: float
+          nullable: true
+        minRoll:
+          type: number
+          format: float
+          nullable: true
+        useRoll:
+          type: boolean
+          nullable: true
+        movementDirection:
+          type: integer
+          format: int32
+          nullable: true
+          enum:
+          - -1
+          - 1
+          - null
+        cameraJoint:
           type: string
-          description: Exercise type
-          example: Chest
-          
-    ExerciseFeedback:
-      type: object
-      description: Feedback of exercise
+          nullable: true
+          enum:
+          - WRIST
+          - ELBOW
+          - KNEE
+          - null
+        cameraMovement:
+          type: string
+          nullable: true
+          enum:
+          - FLEXION
+          - EXTENSION
+          - null
       required:
-        - clientFeedBack
-        - monitorFeedBack
-      properties:
-        clientFeedBack:
-          type: string
-          description: Feedback of client
-          example: This was easy
-        monitorFeedBack:
-          type: string
-          description: Feedback of monitor
-          example: Good job!
-
-    Date:
+      - id
+      - title
+      - description
+      - type
+      description: Catalogue defaults. Nullable capabilities/parameters indicate an exercise without a complete
+        detection profile; do not invent fallback targets.
+      example:
+        id: 73a20000-cc31-4c29-9000-000000000001
+        title: Wrist Flexion
+        description: Support the forearm, palm down. Flex, hold and return to neutral.
+        type: Forearms
+        supportsCamera: true
+        supportsSensors: true
+        cameraJoint: WRIST
+        cameraMovement: FLEXION
+        raiseThreshold: 30.0
+        lowerThreshold: 5.0
+        minRaiseTimeMs: 1000
+        holdTimeMs: 5000
+        cooldownMs: 1000
+        minMovementSpeed: 0.0
+        minPitch: -20.0
+        maxPitch: 20.0
+        minRoll: -10.0
+        maxRoll: 60.0
+        useRoll: true
+        movementDirection: 1
+    ExerciseType:
       type: string
-      description: Date (yyyy-mm-dd)
-      pattern: ^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$
-      example: "2002-03-02"
-
-    BadRequest:
+      enum:
+      - Legs
+      - Shoulders
+      - Back
+      - Abdominals
+      - Chest
+      - Forearms
+      - Traps
+      - Biceps
+      - Triceps
+    ExercisesOfPatients:
       type: object
-      description: Invalid request error
+      properties:
+        patientsExercises:
+          type: array
+          items:
+            $ref: '#/components/schemas/PatientDailyExercises'
       required:
-        - title
-        - status
+      - patientsExercises
+    FeedbackInput:
+      type: object
+      properties:
+        set:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 2147483647
+        feedback:
+          type: string
+        feedbackScore:
+          type: string
+          nullable: true
+          enum: ['1', '2', '3', '4', '5', null]
+          description: Optional execution rating, from one to five stars.
+      required:
+      - set
+      - feedback
+      example:
+        set: 1
+        feedback: Keep the forearm supported.
+        feedbackScore: '4'
+    ListOfExercisesInfo:
+      type: object
+      properties:
+        exercises:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExerciseInfo'
+      required:
+      - exercises
+    ListOfExercisesOfPatient:
+      type: object
+      properties:
+        exercises:
+          type: array
+          items:
+            $ref: '#/components/schemas/Exercise'
+      required:
+      - exercises
+    ListOfPatients:
+      type: object
+      properties:
+        patients:
+          type: array
+          items:
+            $ref: '#/components/schemas/PatientInformation'
+      required:
+      - patients
+    ListOfPlans:
+      type: object
+      properties:
+        plans:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlanInfoOutput'
+      required:
+      - plans
+    LoginInput:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+      - email
+      - password
+      example:
+        email: patient@example.test
+        password: Example-password1@
+    LoginOutput:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        name:
+          type: string
+        role:
+          $ref: '#/components/schemas/Role'
+      required:
+      - id
+      - accessToken
+      - refreshToken
+      - name
+      - role
+    PairOfTokens:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+      required:
+      - accessToken
+      - refreshToken
+    PatientDailyExercises:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        planId:
+          type: integer
+          format: int32
+        dailyListId:
+          type: integer
+          format: int32
+        exercises:
+          type: array
+          items:
+            $ref: '#/components/schemas/DailyExercise'
+      required:
+      - id
+      - name
+      - planId
+      - dailyListId
+      - exercises
+    PatientInformation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+      required:
+      - id
+      - name
+      - email
+    PatientOutput:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+        weight:
+          type: integer
+          format: int32
+          nullable: true
+        height:
+          type: integer
+          format: int32
+          nullable: true
+        physicalCondition:
+          type: string
+          nullable: true
+        birthDate:
+          type: string
+          format: date
+          nullable: true
+      required:
+      - id
+      - name
+      - email
+    PlanAssociation:
+      type: object
       properties:
         title:
           type: string
-          description: Error title
-          example: Bad Request
-        status:
-          type: integer
-          description: Error status
-          example: 400
-
-    NotFound:
-      type: object
-      description: Not found error
+        startDate:
+          type: string
+          format: date
       required:
-        - title
-        - status
+      - title
+      - startDate
+    PlanID:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+      required:
+      - id
+    PlanInfoOutput:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        title:
+          type: string
+        days:
+          type: integer
+          format: int32
+      required:
+      - id
+      - title
+      - days
+    PlanInput:
+      type: object
       properties:
         title:
           type: string
-          description: Error title
-          example: Not Found
-        status:
-          type: integer
-          description: Error status
-          example: 404
-
-    Conflict:
-      type: object
-      description: Already exists error
+        dailyLists:
+          type: array
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/DailyListInput'
+            - type: object
+              nullable: true
+              enum:
+              - null
+          description: One entry per day, in order. null is a rest day.
       required:
-        - title
-        - status
+      - title
+      - dailyLists
+      example:
+        title: Wrist rehabilitation
+        dailyLists:
+        - exercises:
+          - exerciseInfoID: 73a20000-cc31-4c29-9000-000000000001
+            sets: 2
+            reps: 10
+        - null
+        - exercises:
+          - exerciseInfoID: 73a20000-cc31-4c29-9000-000000000001
+            sets: 2
+            reps: 10
+            sensorProfile:
+              raiseThreshold: 40.0
+              lowerThreshold: 5.0
+              minRaiseTimeMs: 1000
+              holdTimeMs: 5000
+              cooldownMs: 1000
+              minMovementSpeed: 0.0
+              minPitch: -20.0
+              maxPitch: 20.0
+              minRoll: -10.0
+              maxRoll: 60.0
+              useRoll: true
+              movementDirection: 1
+    PlanOfPatient:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        title:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+      required:
+      - id
+      - title
+      - startDate
+      - endDate
+    PlanOutput:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        title:
+          type: string
+        startDate:
+          type: string
+          format: date
+          nullable: true
+        dailyLists:
+          type: array
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/DailyListOutput'
+            - type: object
+              nullable: true
+              enum:
+              - null
+      required:
+      - id
+      - title
+      - dailyLists
+      description: For a patient assignment, id and nested daily/exercise ids identify that independent assignment
+        snapshot, not the reusable plan template.
+    PlanToPatient:
+      type: object
+      properties:
+        planID:
+          type: integer
+          format: int32
+        startDate:
+          type: string
+          format: date
+      required:
+      - planID
+      - startDate
+      example:
+        planID: 1
+        startDate: '2026-09-20'
+    PostedVideo:
+      type: object
+      properties:
+        patientID:
+          type: string
+          format: uuid
+        name:
+          type: string
+        exerciseID:
+          type: integer
+          format: int32
+      required:
+      - patientID
+      - name
+      - exerciseID
+    Problem:
+      type: object
       properties:
         title:
           type: string
-          description: Error title
-          example: Conflict
         status:
           type: integer
-          description: Error status
-          example: 409
-
-  securitySchemes:
-    token:
-      type: http
-      scheme: bearer
+          format: int32
+      required:
+      - title
+      - status
+      example:
+        title: Forbidden request
+        status: 400
+    Progress:
+      type: object
+      required:
+      - completedSets
+      properties:
+        completedSets:
+          type: array
+          uniqueItems: true
+          items:
+            type: integer
+            minimum: 1
+            maximum: 20
+      example:
+        completedSets:
+        - 1
+    Rating:
+      type: object
+      properties:
+        averageStarts:
+          type: number
+          format: float
+          description: Backend field spelling is averageStarts (not averageStars).
+        nrOfReviews:
+          type: integer
+          format: int32
+      required:
+      - averageStarts
+      - nrOfReviews
+    RatingInput:
+      type: object
+      properties:
+        user:
+          type: string
+          format: uuid
+        rating:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 5
+      required:
+      - user
+      - rating
+      example:
+        user: 10000000-0000-4000-8000-000000000001
+        rating: 5
+    RefreshTokenInput:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+      required:
+      - refreshToken
+      example:
+        refreshToken: <refresh-token>
+    RegisterInput:
+      type: object
+      properties:
+        email:
+          type: string
+        name:
+          type: string
+        password:
+          type: string
+      required:
+      - email
+      - name
+      - password
+      example:
+        email: physiotherapist@example.test
+        name: Example Physiotherapist
+        password: Example-password1@
+    RegisterPatientInput:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        weight:
+          type: integer
+          format: int32
+          nullable: true
+        height:
+          type: integer
+          format: int32
+          nullable: true
+        birthDate:
+          type: string
+          nullable: true
+        physicalCondition:
+          type: string
+          nullable: true
+      required:
+      - name
+      - email
+      - password
+      example:
+        name: Example Patient
+        email: patient@example.test
+        password: Example-password1@
+        birthDate: '1995-01-01'
+        weight: 70
+        height: 175
+        physicalCondition: Wrist rehabilitation
+    RequestAcceptance:
+      type: object
+      properties:
+        physiotherapist:
+          $ref: '#/components/schemas/PhysiotherapistOutput'
+      required:
+      - physiotherapist
+    RequestIdOutput:
+      type: object
+      properties:
+        requestID:
+          type: string
+          format: uuid
+      required:
+      - requestID
+    RequestInformation:
+      type: object
+      properties:
+        requestID:
+          type: string
+          format: uuid
+        requestText:
+          type: string
+          nullable: true
+        patientID:
+          type: string
+          format: uuid
+        patientName:
+          type: string
+        patientEmail:
+          type: string
+      required:
+      - requestID
+      - patientID
+      - patientName
+      - patientEmail
+    Role:
+      type: string
+      enum:
+      - PATIENT
+      - PHYSIOTHERAPIST
+      - ADMIN
+      description: 'Canonical user roles: PATIENT, PHYSIOTHERAPIST and ADMIN.'
+    SensorProfile:
+      type: object
+      properties:
+        raiseThreshold:
+          type: number
+          format: float
+        lowerThreshold:
+          type: number
+          format: float
+        minRaiseTimeMs:
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 60000
+          description: Milliseconds.
+        holdTimeMs:
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 60000
+          description: Milliseconds.
+        cooldownMs:
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 60000
+          description: Milliseconds.
+        minMovementSpeed:
+          type: number
+          format: float
+          minimum: 0
+          description: Degrees per second.
+        minPitch:
+          type: number
+          format: float
+          minimum: -180
+          maximum: 180
+          description: Degrees.
+        maxPitch:
+          type: number
+          format: float
+          minimum: -180
+          maximum: 180
+          description: Degrees.
+        minRoll:
+          type: number
+          format: float
+          minimum: -180
+          maximum: 180
+          description: Degrees.
+        maxRoll:
+          type: number
+          format: float
+          minimum: -180
+          maximum: 180
+          description: Degrees.
+        useRoll:
+          type: boolean
+          default: true
+        movementDirection:
+          type: integer
+          format: int32
+          default: 1
+          enum:
+          - -1
+          - 1
+      required:
+      - raiseThreshold
+      - lowerThreshold
+      - minRaiseTimeMs
+      - holdTimeMs
+      - cooldownMs
+      - minMovementSpeed
+      - minPitch
+      - maxPitch
+      - minRoll
+      - maxRoll
+      description: Degrees are excursions from calibration. raiseThreshold must exceed lowerThreshold; both must
+        fit the selected primary-axis range. minPitch < maxPitch and minRoll < maxRoll. Camera and sensor execution
+        share targets and timings; axis/sign are wearable mounting settings.
+      example:
+        raiseThreshold: 30.0
+        lowerThreshold: 5.0
+        minRaiseTimeMs: 1000
+        holdTimeMs: 5000
+        cooldownMs: 1000
+        minMovementSpeed: 0.0
+        minPitch: -20.0
+        maxPitch: 20.0
+        minRoll: -10.0
+        maxRoll: 60.0
+        useRoll: true
+        movementDirection: 1
+    SensorSample:
+      type: object
+      properties:
+        elapsedMs:
+          type: integer
+          format: int64
+          minimum: 0
+        pitch:
+          type: number
+          format: float
+          minimum: -180
+          maximum: 180
+        roll:
+          type: number
+          format: float
+          minimum: -180
+          maximum: 180
+        velocity:
+          type: number
+          format: float
+      required:
+      - elapsedMs
+      - pitch
+      - roll
+      - velocity
+    SensorSessionInput:
+      type: object
+      properties:
+        loadValue:
+          type: number
+          format: float
+          nullable: true
+          minimum: 0
+          exclusiveMinimum: true
+          description: External weight used for this set in kg. Required when withLoad is true; omitted otherwise.
+        loadUnit:
+          type: string
+          nullable: true
+          enum: [kg]
+          description: Required as kg when withLoad is true; omitted otherwise.
+        withLoad:
+          type: boolean
+          nullable: true
+          description: Patient-reported external load for this set. False means no load; null means not reported (including historical records).
+        sessionId:
+          type: string
+          format: uuid
+        set:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 20
+        repetitions:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 200
+        durationMs:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 86400000
+        samples:
+          type: array
+          items:
+            $ref: '#/components/schemas/SensorSample'
+          minItems: 1
+          maxItems: 2000
+        profile:
+          oneOf:
+          - $ref: '#/components/schemas/SensorProfile'
+          - type: object
+            nullable: true
+            enum:
+            - null
+      required:
+      - sessionId
+      - set
+      - repetitions
+      - durationMs
+      - samples
+      description: Synthetic samples in examples are test data. set must not exceed prescribed sets and repetitions
+        must equal prescribed repetitions. Samples are sorted by elapsedMs; each timestamp is between zero and durationMs.
+        Reusing the same sessionId with exactly the same payload is idempotent; a different session/payload for
+        an occupied set returns 409. Optional profile is the historical snapshot actually used. withLoad is saved with the session and must remain unchanged on retries.
+      example:
+        sessionId: 20000000-0000-4000-8000-000000000001
+        set: 1
+        repetitions: 10
+        durationMs: 60000
+        samples:
+        - elapsedMs: 0
+          pitch: 0.0
+          roll: 0.0
+          velocity: 0.0
+        - elapsedMs: 1000
+          pitch: 1.0
+          roll: 30.0
+          velocity: 5.0
+        profile:
+          raiseThreshold: 30.0
+          lowerThreshold: 5.0
+          minRaiseTimeMs: 1000
+          holdTimeMs: 5000
+          cooldownMs: 1000
+          minMovementSpeed: 0.0
+          minPitch: -20.0
+          maxPitch: 20.0
+          minRoll: -10.0
+          maxRoll: 60.0
+          useRoll: true
+          movementDirection: 1
+    VideoFeedBack:
+      type: object
+      properties:
+        loadValue:
+          type: number
+          format: float
+          nullable: true
+          minimum: 0
+          exclusiveMinimum: true
+          description: External weight used for this set in kg. Required when withLoad is true; omitted otherwise.
+        loadUnit:
+          type: string
+          nullable: true
+          enum: [kg]
+          description: Required as kg when withLoad is true; omitted otherwise.
+        withLoad:
+          type: boolean
+          nullable: true
+          description: Patient-reported external load for this set. False means no load; null means not reported (including historical records).
+        patientFeedBack:
+          type: string
+          nullable: true
+        physiotherapistFeedBack:
+          type: string
+          nullable: true
+        executionMode:
+          type: string
+          nullable: true
+        executionScore:
+          type: string
+          nullable: true
+        physiotherapistFeedbackScore:
+          type: string
+          nullable: true
+      required:
+      - patientFeedBack
+      - physiotherapistFeedBack
+      description: Shared feedback for camera and sensor results; executionMode identifies the stored mode.
+  responses:
+    Error400:
+      description: Invalid request, profile or prescription
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          example:
+            title: Invalid request, profile or prescription
+            status: 400
+    Error401:
+      description: Missing, invalid or expired credentials
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          example:
+            title: Missing, invalid or expired credentials
+            status: 401
+    Error403:
+      description: Wrong role, owner or patient relationship
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          example:
+            title: Wrong role, owner or patient relationship
+            status: 403
+    Error404:
+      description: Resource or result not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          example:
+            title: Resource or result not found
+            status: 404
+    Error409:
+      description: Conflicting record or occupied exercise set
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          example:
+            title: Conflicting record or occupied exercise set
+            status: 409

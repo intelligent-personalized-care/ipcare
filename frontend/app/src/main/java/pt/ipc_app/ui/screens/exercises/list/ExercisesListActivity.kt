@@ -10,7 +10,7 @@ import pt.ipc_app.DependenciesContainer
 import pt.ipc_app.ui.components.bottomBar.ButtonBarType
 import pt.ipc_app.ui.screens.exercises.ExercisesViewModel
 import pt.ipc_app.ui.screens.exercises.info.ExerciseActivity
-import pt.ipc_app.ui.setAppContentClient
+import pt.ipc_app.ui.setAppContentPatient
 import pt.ipc_app.utils.viewModelInit
 
 class ExercisesListActivity: ComponentActivity() {
@@ -37,9 +37,11 @@ class ExercisesListActivity: ComponentActivity() {
         viewModel.changeButtonBar(ButtonBarType.EXERCISES)
         viewModel.getExercises()
 
-        setAppContentClient(viewModel) {
+        setAppContentPatient(viewModel) {
             ExercisesListScreen(
                 exercises = viewModel.exercises.collectAsState().value,
+                selectedJoint = viewModel.selectedJoint.collectAsState().value,
+                onJointSelected = viewModel::selectJoint,
                 onExerciseClick = { ExerciseActivity.navigate(this, it) },
                 onPaginationClick = { viewModel.getExercises(it) }
             )

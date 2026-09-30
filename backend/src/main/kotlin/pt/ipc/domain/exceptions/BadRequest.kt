@@ -4,5 +4,5 @@ abstract class BadRequest(msg: String) : Exception(msg)
 
 object BadEmail : BadRequest("Bad Email")
 object WeakPassword : BadRequest("Password too weak")
-object AlreadyRatedThisMonitor : BadRequest("You already rated this Monitor")
+object AlreadyRatedThisPhysiotherapist : BadRequest("You already rated this Physiotherapist")
 object BadRating : BadRequest("Rating must be between 1 and 5")

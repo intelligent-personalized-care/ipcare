@@ -1,14 +1,15 @@
 package pt.ipc_app.ui.components.bottomBar
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.ipc_app.domain.user.Role
-import pt.ipc_app.domain.user.isClient
+import pt.ipc_app.domain.user.isPatient
+import pt.ipc_app.ui.theme.*
 
 @Composable
 fun BottomBar(
@@ -19,21 +20,23 @@ fun BottomBar(
     onPlanCreateClick: () -> Unit = { },
     onProfileClick: () -> Unit = { }
 ) {
-    Column(
-        verticalArrangement = Arrangement.Bottom
+    Surface(
+        elevation = 4.dp,
+        color = CardBackground
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .border(1.dp, Color(204, 202, 202, 255)),
-            horizontalArrangement = Arrangement.SpaceEvenly
+                .padding(vertical = 4.dp, horizontal = 8.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             MenuButton(
                 type = ButtonBarType.HOME,
                 enable = buttonClicked == ButtonBarType.HOME,
                 onClick = { onHomeClick() }
             )
-            if (role.isClient())
+            if (role.isPatient())
                 MenuButton(
                     type = ButtonBarType.EXERCISES,
                     enable = buttonClicked == ButtonBarType.EXERCISES,
@@ -55,14 +58,14 @@ fun BottomBar(
 }
 
 @Composable
-fun ClientBottomBar(
+fun PatientBottomBar(
     buttonClicked: ButtonBarType = ButtonBarType.HOME,
     onHomeClick: () -> Unit = { },
     onExercisesClick: () -> Unit = { },
     onProfileClick: () -> Unit = { }
 ) {
     BottomBar(
-        role = Role.CLIENT,
+        role = Role.PATIENT,
         buttonClicked = buttonClicked,
         onHomeClick = onHomeClick,
         onExercisesClick = onExercisesClick,
@@ -71,14 +74,14 @@ fun ClientBottomBar(
 }
 
 @Composable
-fun MonitorBottomBar(
+fun PhysiotherapistBottomBar(
     buttonClicked: ButtonBarType = ButtonBarType.HOME,
     onHomeClick: () -> Unit = { },
     onPlanCreateClick: () -> Unit = { },
     onProfileClick: () -> Unit = { }
 ) {
     BottomBar(
-        role = Role.MONITOR,
+        role = Role.PHYSIOTHERAPIST,
         buttonClicked = buttonClicked,
         onHomeClick = onHomeClick,
         onPlanCreateClick = onPlanCreateClick,
@@ -88,12 +91,12 @@ fun MonitorBottomBar(
 
 @Preview
 @Composable
-fun ClientBottomBarPreview() {
-    ClientBottomBar()
+fun PatientBottomBarPreview() {
+    PatientBottomBar()
 }
 
 @Preview
 @Composable
-fun MonitorBottomBarPreview() {
-    MonitorBottomBar()
+fun PhysiotherapistBottomBarPreview() {
+    PhysiotherapistBottomBar()
 }

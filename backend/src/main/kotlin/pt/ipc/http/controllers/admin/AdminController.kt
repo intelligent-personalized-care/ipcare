@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import pt.ipc.domain.exercises.ExerciseType
-import pt.ipc.http.controllers.admin.models.ListOfUnverifiedMonitors
+import pt.ipc.http.controllers.admin.models.ListOfUnverifiedPhysiotherapists
 import pt.ipc.http.models.Decision
 import pt.ipc.http.models.emitter.CredentialAcceptance
 import pt.ipc.http.pipeline.authentication.Authentication
@@ -36,17 +36,17 @@ class AdminController(private val adminService: AdminService, private val sseEmi
     }
 
     @Authentication
-    @GetMapping(Uris.UNVERIFIED_MONITORS)
-    fun getUnverifiedMonitors(): ResponseEntity<ListOfUnverifiedMonitors> {
-        val monitors = adminService.getUnverifiedMonitors()
+    @GetMapping(Uris.UNVERIFIED_PHYSIOTHERAPISTS)
+    fun getUnverifiedPhysiotherapists(): ResponseEntity<ListOfUnverifiedPhysiotherapists> {
+        val physiotherapists = adminService.getUnverifiedPhysiotherapists()
 
-        return ResponseEntity.ok(ListOfUnverifiedMonitors(monitors = monitors))
+        return ResponseEntity.ok(ListOfUnverifiedPhysiotherapists(physiotherapists = physiotherapists))
     }
 
     @Authentication
-    @GetMapping(Uris.UNVERIFIED_MONITOR)
-    fun credentialOfMonitor(@PathVariable monitorID: UUID): ResponseEntity<ByteArray> {
-        val credential = adminService.getCredentialOfMonitor(monitorID = monitorID)
+    @GetMapping(Uris.UNVERIFIED_PHYSIOTHERAPIST)
+    fun credentialOfPhysiotherapist(@PathVariable physiotherapistID: UUID): ResponseEntity<ByteArray> {
+        val credential = adminService.getCredentialOfPhysiotherapist(physiotherapistID = physiotherapistID)
 
         val headers = HttpHeaders()
         headers.contentType = MediaType.parseMediaType("application/pdf")
@@ -56,11 +56,11 @@ class AdminController(private val adminService: AdminService, private val sseEmi
     }
 
     @Authentication
-    @PostMapping(Uris.UNVERIFIED_MONITOR)
-    fun decideCredentialOfMonitor(@PathVariable monitorID: UUID, @RequestBody decision: Decision): ResponseEntity<Unit> {
-        adminService.decideMonitorCredential(monitorID = monitorID, accept = decision.accept)
+    @PostMapping(Uris.UNVERIFIED_PHYSIOTHERAPIST)
+    fun decideCredentialOfPhysiotherapist(@PathVariable physiotherapistID: UUID, @RequestBody decision: Decision): ResponseEntity<Unit> {
+        adminService.decidePhysiotherapistCredential(physiotherapistID = physiotherapistID, accept = decision.accept)
 
-        sseEmitterRepository.send(userID = monitorID, CredentialAcceptance(acceptance = decision.accept))
+        sseEmitterRepository.send(userID = physiotherapistID, CredentialAcceptance(acceptance = decision.accept))
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }

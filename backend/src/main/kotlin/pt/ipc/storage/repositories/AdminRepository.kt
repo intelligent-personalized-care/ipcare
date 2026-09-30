@@ -1,7 +1,7 @@
 package pt.ipc.storage.repositories
 
 import pt.ipc.domain.User
-import pt.ipc.services.dtos.MonitorInfo
+import pt.ipc.services.dtos.PhysiotherapistInfo
 import java.util.UUID
 
 interface AdminRepository {
@@ -10,7 +10,7 @@ interface AdminRepository {
 
     fun createAdmin(id: UUID, email: String, name: String, passwordHash: String, sessionID: String)
 
-    fun getUnverifiedMonitors(): List<MonitorInfo>
+    fun getUnverifiedPhysiotherapists(): List<PhysiotherapistInfo>
 
-    fun decideMonitorVerification(monitorID: UUID, decision: Boolean)
+    fun decidePhysiotherapistVerification(physiotherapistID: UUID, decision: Boolean)
 }

@@ -8,7 +8,7 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.*
 import pt.ipc_app.DependenciesContainer
 import pt.ipc_app.ui.components.bottomBar.ButtonBarType
-import pt.ipc_app.ui.setAppContentMonitor
+import pt.ipc_app.ui.setAppContentPhysiotherapist
 import pt.ipc_app.utils.viewModelInit
 
 /**
@@ -38,9 +38,11 @@ class CreatePlanActivity : ComponentActivity() {
         viewModel.changeButtonBar(ButtonBarType.PLANS)
         viewModel.getExercises()
 
-        setAppContentMonitor(viewModel) {
+        setAppContentPhysiotherapist(viewModel) {
             CreatePlanScreen(
                 exercises = viewModel.exercises.collectAsState().value,
+                saving = viewModel.planState.collectAsState().value == pt.ipc_app.ui.components.ProgressState.WAITING,
+                loadingExercises = viewModel.exercisesState.collectAsState().value == pt.ipc_app.ui.components.ProgressState.WAITING,
                 onPlanCreation = {
                     viewModel.createPlan(it, onSuccess = ::finish)
                 },

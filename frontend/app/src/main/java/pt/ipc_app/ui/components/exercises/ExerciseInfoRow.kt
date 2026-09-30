@@ -1,9 +1,16 @@
 package pt.ipc_app.ui.components.exercises
 
+import pt.ipc_app.R
+
+import androidx.compose.ui.res.stringResource
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -13,13 +20,14 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import pt.ipc_app.domain.exercise.Exercise
 import pt.ipc_app.domain.exercise.ExerciseInfo
 import pt.ipc_app.ui.components.CustomTextField
 import pt.ipc_app.ui.components.TextFieldType
+import pt.ipc_app.ui.theme.*
 
 @Composable
 fun ExerciseInfoRow(
@@ -28,82 +36,55 @@ fun ExerciseInfoRow(
     onExerciseAdd: (Exercise) -> Unit = { }
 ) {
     var clicked by remember { mutableStateOf(false) }
+    var sets by remember { mutableStateOf(1) }
+    var reps by remember { mutableStateOf(10) }
 
-    var sets by remember { mutableStateOf(0) }
-    var reps by remember { mutableStateOf(0) }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+    Column(
         modifier = Modifier
-            .width(300.dp)
-            .height(60.dp)
-            .background(Color.White)
-            .clickable { clicked = !clicked }
-            .padding(8.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(CardBackground)
     ) {
-        Column {
-            Text(exercise.title)
-        }
-        Spacer(modifier = Modifier.weight(0.1f))
-        Row {
-            if (!clickExerciseEnabled)
-                AddExerciseIcon(true)
-            else if (clicked)
-                Icon(
-                    imageVector = Icons.Default.ArrowDropUp,
-                    contentDescription = "DropUp"
-                )
-            else
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "DropDown"
-                )
-        }
-    }
-    if (clicked && clickExerciseEnabled) {
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .padding(8.dp)
-                .width(280.dp)
-                .height(60.dp)
+                .fillMaxWidth()
+                .clickable { clicked = !clicked }
+                .padding(16.dp)
         ) {
-            CustomTextField(
-                fieldType = TextFieldType.EXERCISE_SETS,
-                textToDisplay = sets.toString(),
-                updateText = { sets = it.toInteger(2) },
-                keyboardType = KeyboardType.Number,
-                modifier = Modifier
-                    .weight(0.5f)
-            )
-            CustomTextField(
-                fieldType = TextFieldType.EXERCISE_REPS,
-                textToDisplay = reps.toString(),
-                updateText = { reps = it.toInteger(2) },
-                keyboardType = KeyboardType.Number,
-                modifier = Modifier
-                    .weight(0.5f)
-            )
-            Box(
-                modifier = Modifier
-                    .clickable {
-                        if (sets != 0 && reps != 0) {
-                            onExerciseAdd(
-                                Exercise(
-                                    exeID = exercise.id,
-                                    exeTitle = exercise.title,
-                                    exeDescription = exercise.description,
-                                    exeSets = sets,
-                                    exeReps = reps
-                                )
-                            )
-                            clicked = !clicked
-                        }
-                    }
-                    .padding(start = 16.dp)
-            ) {
-                AddExerciseIcon(false)
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = exercise.title,
+                    style = MaterialTheme.typography.subtitle1,
+                    color = MediumBlue
+                )
+            }
+            Row {
+                if (!clickExerciseEnabled)
+                    AddExerciseIcon(alreadyInDailyList = true)
+                else if (clicked)
+                    Icon(
+                        imageVector = Icons.Default.ArrowDropUp,
+                        contentDescription = stringResource(R.string.ui_collapse),
+                        tint = MediumGrey
+                    )
+                else
+                    Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = stringResource(R.string.ui_expand),
+                        tint = MediumGrey
+                    )
+            }
+        }
+        if (clicked && clickExerciseEnabled) {
+            Column(Modifier.padding(horizontal = 16.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    CustomTextField(fieldType = TextFieldType.EXERCISE_SETS, textToDisplay = sets.toString(), updateText = { sets = it.toInteger(2) }, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                    CustomTextField(fieldType = TextFieldType.EXERCISE_REPS, textToDisplay = reps.toString(), updateText = { reps = it.toInteger(3) }, keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
+                }
+                Button(onClick = {
+                    onExerciseAdd(Exercise(exercise.id, exercise.title, exercise.description, sets, reps)); clicked = false
+                }, enabled = sets in 1..20 && reps in 1..200, modifier = Modifier.fillMaxWidth(), shape = ButtonShape) { Text(stringResource(R.string.ui_view_exercise)) }
             }
         }
     }
@@ -118,7 +99,7 @@ private fun String.toInteger(maxLength: Int): Int {
 fun AddExerciseIcon(alreadyInDailyList: Boolean) {
     Icon(
         imageVector = if (alreadyInDailyList) Icons.Default.Check else Icons.Default.Add,
-        contentDescription = "Exercise Info",
-        tint = Color(131, 204, 46, 255)
+        contentDescription = stringResource(R.string.label_exercise_information),
+        tint = HealthMint
     )
 }

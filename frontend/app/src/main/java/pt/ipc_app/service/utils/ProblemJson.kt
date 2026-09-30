@@ -14,7 +14,7 @@ open class ResponseError(
  */
 class ProblemJson(
     title: String,
-    private val status: Int
+    val status: Int
 ): ResponseError(title) {
 
     fun unauthenticatedResponse() = title == UNAUTHENTICATED && status == HttpURLConnection.HTTP_UNAUTHORIZED

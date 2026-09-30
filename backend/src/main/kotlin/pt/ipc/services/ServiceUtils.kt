@@ -5,7 +5,7 @@ import pt.ipc.domain.Role
 import pt.ipc.domain.Session
 import pt.ipc.domain.User
 import pt.ipc.domain.exceptions.BadEmail
-import pt.ipc.domain.exceptions.MonitorNotVerified
+import pt.ipc.domain.exceptions.PhysiotherapistNotVerified
 import pt.ipc.domain.exceptions.WeakPassword
 import pt.ipc.domain.jwt.JwtUtils
 import pt.ipc.storage.transaction.TransactionManager
@@ -23,11 +23,11 @@ class ServiceUtils(
 
     fun getUser(id: UUID, role: Role, sessionID: String): User? =
         when (role) {
-            Role.MONITOR -> transactionManager.run {
-                it.monitorRepository.getUserByIDAndSession(id = id, sessionID = sessionID)
+            Role.PHYSIOTHERAPIST -> transactionManager.run {
+                it.physiotherapistRepository.getUserByIDAndSession(id = id, sessionID = sessionID)
             }
 
-            Role.CLIENT -> transactionManager.run {
+            Role.PATIENT -> transactionManager.run {
                 it.usersRepository.getUserByIDAndSession(id = id, sessionID = sessionID)
             }
 
@@ -36,9 +36,9 @@ class ServiceUtils(
             }
         }
 
-    fun checkIfMonitorIsVerified(monitorID: UUID) =
+    fun checkIfPhysiotherapistIsVerified(physiotherapistID: UUID) =
         transactionManager.run {
-            if (!it.monitorRepository.checkIfMonitorIsVerified(monitorID = monitorID)) throw MonitorNotVerified
+            if (!it.physiotherapistRepository.checkIfPhysiotherapistIsVerified(physiotherapistID = physiotherapistID)) throw PhysiotherapistNotVerified
         }
 
     fun createCredentials(role: Role): Session {

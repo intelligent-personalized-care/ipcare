@@ -3,12 +3,36 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- Bluetooth classic (pre-Android 12) -->
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+
+    <!-- BLE scanning requires location on Android <= 11 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:maxSdkVersion="30" />
+
+    <!-- Android 12+ BLE runtime permissions -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation"
+        tools:targetApi="s" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_CONNECT"
+        tools:targetApi="s" />
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="false" />
+
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
 
     <application
         android:name=".IPCApplication"
@@ -45,7 +69,7 @@
         </activity>
 
         <activity
-            android:name=".ui.screens.home.ClientHomeActivity"
+            android:name=".ui.screens.home.PatientHomeActivity"
             android:exported="false"
             android:screenOrientation="portrait">
         </activity>
@@ -69,43 +93,55 @@
         </activity>
 
         <activity
-            android:name=".ui.screens.exercises.done.ClientExerciseActivity"
+            android:name=".ui.screens.exercises.selection.ChooseCameraOrSensorActivity"
             android:exported="false"
             android:screenOrientation="portrait">
         </activity>
 
         <activity
-            android:name=".ui.screens.profile.ClientProfileActivity"
+            android:name=".ui.screens.exercises.sensor.SensorActivity"
             android:exported="false"
             android:screenOrientation="portrait">
         </activity>
 
         <activity
-            android:name=".ui.screens.profile.MonitorProfileActivity"
+            android:name=".ui.screens.exercises.done.PatientExerciseActivity"
             android:exported="false"
             android:screenOrientation="portrait">
         </activity>
 
         <activity
-            android:name=".ui.screens.search.SearchMonitorsActivity"
+            android:name=".ui.screens.profile.PatientProfileActivity"
             android:exported="false"
             android:screenOrientation="portrait">
         </activity>
 
         <activity
-            android:name=".ui.screens.home.MonitorHomeActivity"
+            android:name=".ui.screens.profile.PhysiotherapistProfileActivity"
             android:exported="false"
             android:screenOrientation="portrait">
         </activity>
 
         <activity
-            android:name=".ui.screens.details.ClientDetailsActivity"
+            android:name=".ui.screens.search.SearchPhysiotherapistsActivity"
             android:exported="false"
             android:screenOrientation="portrait">
         </activity>
 
         <activity
-            android:name=".ui.screens.details.MonitorDetailsActivity"
+            android:name=".ui.screens.home.PhysiotherapistHomeActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity
+            android:name=".ui.screens.details.PatientDetailsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity
+            android:name=".ui.screens.details.PhysiotherapistDetailsActivity"
             android:exported="false"
             android:screenOrientation="portrait">
         </activity>
@@ -122,13 +158,7 @@
             android:screenOrientation="portrait">
         </activity>
 
-        <activity
-            android:name=".ui.screens.about.AboutActivity"
-            android:exported="false"
-            android:screenOrientation="portrait">
-        </activity>
-
-        <!-- ML KIT Activities -->
+<!-- ML KIT Activities -->
 
         <activity
             android:name=".mlkit.vision.CameraXLivePreviewActivity"
@@ -144,6 +174,7 @@
             android:screenOrientation="portrait">
         </activity>
 
+        <activity android:name=".ui.screens.plan.PlanLibraryActivity" android:exported="false" android:screenOrientation="portrait" />
     </application>
 
 </manifest>

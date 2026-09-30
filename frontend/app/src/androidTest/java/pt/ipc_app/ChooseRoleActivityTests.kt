@@ -12,8 +12,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import pt.ipc_app.ui.screens.login.LoginScreenTag
-import pt.ipc_app.ui.screens.register.RegisterClientScreenTag
-import pt.ipc_app.ui.screens.register.RegisterMonitorScreenTag
+import pt.ipc_app.ui.screens.register.RegisterPatientScreenTag
+import pt.ipc_app.ui.screens.register.RegisterPhysiotherapistScreenTag
 import pt.ipc_app.ui.screens.role.*
 import java.util.*
 
@@ -45,23 +45,23 @@ class ChooseRoleActivityTests {
     }
 
     @Test
-    fun choosing_client_role_navigates_to_register_client() {
+    fun choosing_patient_role_navigates_to_register_patient() {
 
-        testRule.onNodeWithTag(ChooseClientButtonTag).performClick()
+        testRule.onNodeWithTag(ChoosePatientButtonTag).performClick()
         testRule.onNodeWithTag(SelectButtonTag).performClick()
         testRule.waitForIdle()
 
-        testRule.onNodeWithTag(RegisterClientScreenTag).assertExists()
+        testRule.onNodeWithTag(RegisterPatientScreenTag).assertExists()
     }
 
     @Test
-    fun choosing_monitor_role_navigates_to_register_monitor() {
+    fun choosing_physiotherapist_role_navigates_to_register_physiotherapist() {
 
-        testRule.onNodeWithTag(ChooseMonitorButtonTag).performClick()
+        testRule.onNodeWithTag(ChoosePhysiotherapistButtonTag).performClick()
         testRule.onNodeWithTag(SelectButtonTag).performClick()
         testRule.waitForIdle()
 
-        testRule.onNodeWithTag(RegisterMonitorScreenTag).assertExists()
+        testRule.onNodeWithTag(RegisterPhysiotherapistScreenTag).assertExists()
     }
 
     @Test

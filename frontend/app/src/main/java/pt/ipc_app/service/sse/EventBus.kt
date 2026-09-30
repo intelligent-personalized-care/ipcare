@@ -4,7 +4,7 @@ import pt.ipc_app.service.models.sse.SseEvent
 
 object EventBus {
     // List of registered listeners for events
-    private val listeners: MutableList<SseEventListener> = mutableListOf()
+    private val listeners = java.util.concurrent.CopyOnWriteArraySet<SseEventListener>()
 
     /**
      * Registers a listener to receive events
@@ -32,4 +32,3 @@ object EventBus {
         }
     }
 }
-

@@ -35,5 +35,13 @@ private val DarkColorPalette = darkColors(
 private val LightColorPalette = lightColors(
     primary = MediumBlue,
     primaryVariant = DarkBlue,
-    secondary = LightLightBlue
+    secondary = LightLightBlue,
+    background = BackgroundWhite,
+    surface = CardBackground,
+    error = ErrorRed,
+    onPrimary = White,
+    onSecondary = MediumBlue,
+    onBackground = DarkGrey,
+    onSurface = DarkGrey,
+    onError = White
 )

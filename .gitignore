@@ -1,0 +1,70 @@
+# Build products and caches (keep Gradle wrappers and source files)
+.gradle/
+.kotlin/
+**/build/
+**/out/
+**/target/
+.externalNativeBuild/
+.cxx/
+.pio/
+*.apk
+*.aab
+*.ap_
+*.class
+*.hprof
+hs_err_pid*
+replay_pid*
+
+# Local tools, test runs and IDE settings
+/.integration/
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+local.properties
+captures/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+node_modules/
+
+# Logs, backups and operating-system files
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local credentials and deployment configuration; commit only sanitized examples
+.env
+.env.*
+!.env.example
+!.env.*.example
+/secrets/
+/credentials/
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+service-account*.json
+*-service-account.json
+application_default_credentials.json
+/backend/app.yaml
+/backend/src/main/resources/application.yml
+/backend/src/main/resources/application-local.yml
+/backend/src/main/resources/application-local.yaml
+
+# Dissertation build output and local revision copies; keep sources and figures
+/report/.Build/
+/report/revisions/
+
+# Do not ignore all .jar, .pdf, .csv or .py files:
+# wrappers, documentation, figures and maintained verification scripts are source assets.

@@ -4,13 +4,13 @@ import java.util.*
 
 interface CloudStorageUtils {
 
-    fun uploadClientVideo(fileName: UUID, video: ByteArray)
+    fun uploadPatientVideo(fileName: UUID, video: ByteArray)
 
-    fun downloadClientVideo(fileName: UUID): ByteArray
+    fun downloadPatientVideo(fileName: UUID): ByteArray
 
-    fun uploadMonitorCredentials(fileName: UUID, file: ByteArray)
+    fun uploadPhysiotherapistCredentials(fileName: UUID, file: ByteArray)
 
-    fun downloadMonitorCredentials(fileName: UUID): ByteArray
+    fun downloadPhysiotherapistCredentials(fileName: UUID): ByteArray
 
     fun downloadExampleVideo(exerciseID: UUID): ByteArray
 
@@ -26,9 +26,9 @@ interface CloudStorageUtils {
 
     fun deleteCredential(fileName: UUID)
 
-    fun getClientsVideosIDs(): List<UUID>
+    fun getPatientsVideosIDs(): List<UUID>
 
-    fun deleteClientVideo(fileName: UUID)
+    fun deletePatientVideo(fileName: UUID)
 
     fun getUserPhotosIDs(): List<UUID>
 

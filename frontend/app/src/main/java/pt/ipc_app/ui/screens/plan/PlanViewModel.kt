@@ -23,16 +23,16 @@ class PlanViewModel(
         get() = _plan.asStateFlow()
 
     /**
-     * Attempts to get a plan of client.
+     * Attempts to get a plan of patient.
      */
-    fun getPlanOfClient(
-        clientId: String,
+    fun getPlanOfPatient(
+        patientId: String,
         date: String
     ) {
         launchAndExecuteRequest(
             request = {
-                plansService.getPlanOfClient(
-                    clientId = UUID.fromString(clientId),
+                plansService.getPlanOfPatient(
+                    patientId = UUID.fromString(patientId),
                     date = date,
                     token = sessionManager.userLoggedIn.accessToken
                 )

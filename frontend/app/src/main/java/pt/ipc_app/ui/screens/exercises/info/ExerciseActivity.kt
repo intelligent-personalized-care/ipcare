@@ -11,7 +11,8 @@ import pt.ipc_app.domain.exercise.Exercise
 import pt.ipc_app.domain.exercise.ExerciseTotalInfo
 import pt.ipc_app.mlkit.vision.CameraXLivePreviewActivity
 import pt.ipc_app.ui.screens.exercises.ExercisesViewModel
-import pt.ipc_app.ui.setAppContentClient
+import pt.ipc_app.ui.screens.exercises.selection.ChooseCameraOrSensorActivity
+import pt.ipc_app.ui.setAppContentPatient
 import pt.ipc_app.utils.viewModelInit
 
 class ExerciseActivity: ComponentActivity() {
@@ -37,14 +38,13 @@ class ExerciseActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setAppContentClient(viewModel) {
+        setAppContentPatient(viewModel) {
             ExerciseScreen(
                 exercise = exercise,
                 isToRecord = if (exercise is ExerciseTotalInfo) !(exercise as ExerciseTotalInfo).exercise.isDone else true,
                 exercisePreviewUrl = viewModel.getExercisePreviewUrl(exercise.exeID),
                 onRecordClick = {
-                    finish()
-                    CameraXLivePreviewActivity.navigate(this, exercise)
+                    ChooseCameraOrSensorActivity.navigate(this, exercise)
                 }
             )
         }

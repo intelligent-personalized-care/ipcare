@@ -14,8 +14,8 @@ import pt.ipc_app.DependenciesContainer
 import pt.ipc_app.domain.user.Role
 import pt.ipc_app.service.utils.ProblemJson
 import pt.ipc_app.ui.components.ProgressState
-import pt.ipc_app.ui.screens.home.ClientHomeActivity
-import pt.ipc_app.ui.screens.home.MonitorHomeActivity
+import pt.ipc_app.ui.screens.home.PatientHomeActivity
+import pt.ipc_app.ui.screens.home.PhysiotherapistHomeActivity
 import pt.ipc_app.ui.setAppContentInitial
 import pt.ipc_app.utils.viewModelInit
 
@@ -48,22 +48,22 @@ class RegisterActivity : ComponentActivity() {
             val state by viewModel.state.collectAsState()
             val error by viewModel.error.collectAsState()
 
-            if (Role.isClient(role))
-                RegisterClientScreen(
+            if (Role.isPatient(role))
+                RegisterPatientScreen(
                     progressState = state,
                     error = if (error is ProblemJson) error as ProblemJson else null,
                     onSaveRequest = {
-                        viewModel.registerClient(
+                        viewModel.registerPatient(
                             it.name, it.email, it.password, it.weight, it.height, it.birthDate, it.physicalCondition
                         )
                     }
                 )
             else
-                RegisterMonitorScreen(
+                RegisterPhysiotherapistScreen(
                     progressState = state,
                     error = if (error is ProblemJson) error as ProblemJson else null,
                     onSaveRequest = {
-                        viewModel.registerMonitor(
+                        viewModel.registerPhysiotherapist(
                             it.name, it.email, it.password
                         )
                     }
@@ -74,10 +74,10 @@ class RegisterActivity : ComponentActivity() {
             viewModel.state.collect {
 
                 if (it == ProgressState.FINISHED) {
-                    if (Role.isClient(role))
-                        ClientHomeActivity.navigate(this@RegisterActivity)
+                    if (Role.isPatient(role))
+                        PatientHomeActivity.navigate(this@RegisterActivity)
                     else
-                        MonitorHomeActivity.navigate(this@RegisterActivity)
+                        PhysiotherapistHomeActivity.navigate(this@RegisterActivity)
                     finish()
                 }
             }

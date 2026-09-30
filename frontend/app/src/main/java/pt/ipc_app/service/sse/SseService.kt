@@ -25,7 +25,7 @@ class SseService(
     jsonEncoder: Gson
 ) : HTTPService(apiEndpoint, httpClient, jsonEncoder) {
 
-    private lateinit var eventSource: EventSource
+    private var eventSource: EventSource? = null
 
     private val eventSourceListener = object : EventSourceListener() {
         override fun onOpen(eventSource: EventSource, response: Response) {
@@ -50,11 +50,11 @@ class SseService(
                     // Deserialize the SSE event data based on the event type
                     val event = when (it) {
                         CredentialAcceptance::class.java.simpleName -> jsonEncoder.fromJson(data, CredentialAcceptance::class.java)
-                        MonitorFeedBack::class.java.simpleName -> jsonEncoder.fromJson(data, MonitorFeedBack::class.java)
+                        PhysiotherapistFeedBack::class.java.simpleName -> jsonEncoder.fromJson(data, PhysiotherapistFeedBack::class.java)
                         PlanAssociation::class.java.simpleName -> jsonEncoder.fromJson(data, PlanAssociation::class.java)
                         PostedVideo::class.java.simpleName -> jsonEncoder.fromJson(data, PostedVideo::class.java)
                         RequestAcceptance::class.java.simpleName -> jsonEncoder.fromJson(data, RequestAcceptance::class.java)
-                        RequestMonitor::class.java.simpleName -> jsonEncoder.fromJson(data, RequestMonitor::class.java)
+                        RequestPhysiotherapist::class.java.simpleName -> jsonEncoder.fromJson(data, RequestPhysiotherapist::class.java)
                         else -> SseEvent()
                     }
                     EventBus.postEvent(event)
@@ -72,6 +72,7 @@ class SseService(
 
     // Start the SSE connection
     fun start(token: String) {
+        eventSource?.cancel()
         val request = Request.Builder()
             .url("$apiEndpoint/users/subscribe")
             .checkAuthorization(BEARER_TOKEN, token)
@@ -80,7 +81,7 @@ class SseService(
             .build()
 
         eventSource = EventSources
-            .createFactory(httpClient)
+            .createFactory(httpClient.newBuilder().readTimeout(0, java.util.concurrent.TimeUnit.SECONDS).build())
             .newEventSource(
                 request = request,
                 listener = eventSourceListener
@@ -92,7 +93,7 @@ class SseService(
         post<EmptyResponseBody>(
             uri = "/users/unsubscribe",
             token = token
-        ).also { eventSource.cancel() }
+        ).also { eventSource?.cancel(); eventSource = null }
 
     companion object {
         private const val TAG = "SSES"

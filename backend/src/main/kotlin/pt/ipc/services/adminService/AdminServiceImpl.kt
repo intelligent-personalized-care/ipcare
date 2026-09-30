@@ -6,7 +6,7 @@ import pt.ipc.domain.encryption.EncryptionUtils
 import pt.ipc.domain.exercises.ExerciseType
 import pt.ipc.services.ServiceUtils
 import pt.ipc.services.dtos.CredentialsOutput
-import pt.ipc.services.dtos.MonitorInfo
+import pt.ipc.services.dtos.PhysiotherapistInfo
 import pt.ipc.services.dtos.RegisterInput
 import pt.ipc.storage.transaction.TransactionManager
 import java.util.*
@@ -38,25 +38,24 @@ class AdminServiceImpl(
         return CredentialsOutput(id = userID, accessToken = accessToken, refreshToken = refreshToken)
     }
 
-    override fun getUnverifiedMonitors(): List<MonitorInfo> =
+    override fun getUnverifiedPhysiotherapists(): List<PhysiotherapistInfo> =
         transactionManager.run {
-            it.adminRepository.getUnverifiedMonitors()
+            it.adminRepository.getUnverifiedPhysiotherapists()
         }
 
-    override fun getCredentialOfMonitor(monitorID: UUID): ByteArray =
+    override fun getCredentialOfPhysiotherapist(physiotherapistID: UUID): ByteArray =
         transactionManager.run {
-            it.cloudStorage.downloadMonitorCredentials(fileName = monitorID)
+            it.cloudStorage.downloadPhysiotherapistCredentials(fileName = physiotherapistID)
         }
 
-    override fun decideMonitorCredential(monitorID: UUID, accept: Boolean) =
+    override fun decidePhysiotherapistCredential(physiotherapistID: UUID, accept: Boolean) =
         transactionManager.run {
-            it.adminRepository.decideMonitorVerification(monitorID = monitorID, decision = accept)
+            it.adminRepository.decidePhysiotherapistVerification(physiotherapistID = physiotherapistID, decision = accept)
         }
 
     override fun addExerciseInfoPreview(title: String, description: String, type: ExerciseType, video: ByteArray) {
         val exerciseID = UUID.randomUUID()
         transactionManager.run(fileName = exerciseID) {
-
             it.exerciseRepository.addExerciseInfoPreview(
                 exerciseID = exerciseID,
                 title = title,

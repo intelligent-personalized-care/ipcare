@@ -5,9 +5,8 @@ import com.google.cloud.storage.Storage
 import com.google.cloud.storage.StorageOptions
 import org.threeten.bp.Duration
 
-
-class CloudStorageConfiguration{
-    companion object{
+class CloudStorageConfiguration {
+    companion object {
 
         private const val maxAttempts = 5
 
@@ -33,9 +32,8 @@ class CloudStorageConfiguration{
         val storage: Storage = storageOptions.service
 
         const val userPhotosBucket = "ipc_users_photos"
-        const val monitorCredentialsBucket = "ipc_monitors_credentials"
-        const val clientsVideosBucket = "ipc_clients_videos"
+        const val physiotherapistCredentialsBucket = "ipc_monitors_credentials"
+        const val patientsVideosBucket = "ipc_clients_videos"
         const val exercisesPreviewsBucket = "ipc_exercises_previews"
-
     }
 }

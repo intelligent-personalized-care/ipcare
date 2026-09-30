@@ -8,4 +8,6 @@ import okhttp3.Response
  * @property response the response that caused the exception
  */
 class UnexpectedResponseException(private val response: Response) :
-    Exception("Unexpected ${response.code} response from the server.")
+    Exception("Unexpected ${response.code} response from the server.") {
+    val statusCode: Int get() = response.code
+}

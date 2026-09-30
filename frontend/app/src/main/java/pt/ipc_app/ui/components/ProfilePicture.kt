@@ -1,5 +1,7 @@
 package pt.ipc_app.ui.components
 
+import androidx.compose.ui.res.stringResource
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
@@ -28,7 +30,7 @@ fun ProfilePicture(
         if (!pictureNotFound)
             AsyncImage(
                 model = imageRequest,
-                contentDescription = "Picture",
+                contentDescription = stringResource(R.string.label_profile_picture),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .clip(CircleShape)
@@ -43,7 +45,7 @@ fun ProfilePicture(
         else
             Image(
                 painter = painterResource(R.drawable.default_profile_picture),
-                contentDescription = "Picture default",
+                contentDescription = stringResource(R.string.label_default_profile_picture),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .clip(CircleShape)

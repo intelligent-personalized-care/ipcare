@@ -11,13 +11,13 @@ interface ExercisesService {
 
     fun getExercisesInfo(exerciseID: UUID): ExerciseInfo
 
-    fun getExercises(exerciseType: ExerciseType?, skip: Int, limit: Int): List<ExerciseInfo>
+    fun getExercises(exerciseType: String?, skip: Int, limit: Int, joint: String? = null): List<ExerciseInfo>
 
     fun getExercisePreviewVideo(exerciseID: UUID): ByteArray
 
-    fun getClientVideo(clientID: UUID, /*userID: UUID,*/ planID: Int, dailyList: Int, dailyExercise: Int, set: Int): ByteArray
+    fun getPatientVideo(patientID: UUID, userID: UUID, planID: Int, dailyList: Int, dailyExercise: Int, set: Int): ByteArray
 
-    fun getVideoFeedback(clientID: UUID, userID: UUID, planID: Int, dailyList: Int, dailyExercise: Int, set: Int): VideoFeedBack
+    fun getVideoFeedback(patientID: UUID, userID: UUID, planID: Int, dailyList: Int, dailyExercise: Int, set: Int): VideoFeedBack
 
-    fun getPlanOfClientContainingDate(userID: UUID, clientID: UUID, date: LocalDate): PlanOutput
+    fun getPlanOfPatientContainingDate(userID: UUID, patientID: UUID, date: LocalDate): PlanOutput
 }

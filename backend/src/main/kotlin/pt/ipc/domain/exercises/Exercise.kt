@@ -8,7 +8,8 @@ data class Exercise(
     @ColumnName("ex_id")
     val exerciseInfoID: UUID,
     val sets: Int,
-    val reps: Int
+    val reps: Int,
+    val sensorProfile: SensorProfile? = null
 )
 
 data class ExerciseTotalInfo(

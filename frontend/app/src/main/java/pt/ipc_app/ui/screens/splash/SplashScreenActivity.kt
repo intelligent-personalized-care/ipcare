@@ -6,12 +6,15 @@ import androidx.activity.viewModels
 import kotlinx.coroutines.*
 import pt.ipc_app.DependenciesContainer
 import pt.ipc_app.R
+import pt.ipc_app.domain.exercise.Exercise
 import pt.ipc_app.domain.user.Role
-import pt.ipc_app.domain.user.isClient
-import pt.ipc_app.ui.screens.home.ClientHomeActivity
-import pt.ipc_app.ui.screens.home.MonitorHomeActivity
+import pt.ipc_app.domain.user.isPatient
+import pt.ipc_app.ui.screens.exercises.info.ExerciseActivity
+import pt.ipc_app.ui.screens.home.PatientHomeActivity
+import pt.ipc_app.ui.screens.home.PhysiotherapistHomeActivity
 import pt.ipc_app.ui.screens.role.ChooseRoleActivity
 import pt.ipc_app.utils.viewModelInit
+import java.util.UUID
 
 /**
  * The start screen.
@@ -35,12 +38,12 @@ class SplashScreenActivity: ComponentActivity() {
 
         CoroutineScope(Dispatchers.Main).launch {
             if (repo.isLoggedIn()) {
-                if (repo.userLoggedIn.role.isClient()) {
-                    viewModel.getMonitorOfClient()
-                    viewModel.getCurrentPlanOfClient()
+                if (repo.userLoggedIn.role.isPatient()) {
+                    viewModel.getPhysiotherapistOfPatient()
+                    viewModel.getCurrentPlanOfPatient()
                 } else {
-                    viewModel.getClientsOfMonitor()
-                    viewModel.getRequestsOfMonitor()
+                    viewModel.getPatientsOfPhysiotherapist()
+                    viewModel.getRequestsOfPhysiotherapist()
                 }
             }
 
@@ -49,10 +52,10 @@ class SplashScreenActivity: ComponentActivity() {
             if (!repo.isLoggedIn()) {
                 ChooseRoleActivity.navigate(this@SplashScreenActivity)
             } else {
-                if (repo.userLoggedIn.role.isClient()) {
-                    ClientHomeActivity.navigate(this@SplashScreenActivity, viewModel.monitor.value, viewModel.plan.value)
+                if (repo.userLoggedIn.role.isPatient()) {
+                    PatientHomeActivity.navigate(this@SplashScreenActivity, viewModel.physiotherapist.value, viewModel.plan.value)
                 } else {
-                    MonitorHomeActivity.navigate(this@SplashScreenActivity, viewModel.clients.value, viewModel.requests.value)
+                    PhysiotherapistHomeActivity.navigate(this@SplashScreenActivity, viewModel.patients.value, viewModel.requests.value)
                 }
             }
             finish()

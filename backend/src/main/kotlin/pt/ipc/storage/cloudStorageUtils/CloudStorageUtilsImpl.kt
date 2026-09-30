@@ -14,8 +14,8 @@ class CloudStorageUtilsImpl : CloudStorageUtils {
     private val storage: Storage = CloudStorageConfiguration.storage
 
     private val userPhotosBucket = CloudStorageConfiguration.userPhotosBucket
-    private val monitorCredentialsBucket = CloudStorageConfiguration.monitorCredentialsBucket
-    private val clientsVideosBucket = CloudStorageConfiguration.clientsVideosBucket
+    private val physiotherapistCredentialsBucket = CloudStorageConfiguration.physiotherapistCredentialsBucket
+    private val patientsVideosBucket = CloudStorageConfiguration.patientsVideosBucket
     private val exercisesPreviewsBucket = CloudStorageConfiguration.exercisesPreviewsBucket
 
     private val videoContentType = "video/mp4"
@@ -47,23 +47,23 @@ class CloudStorageUtilsImpl : CloudStorageUtils {
         BlobId.of(bucketName, fileName)?.let { storage.delete(it) }
     }
 
-    override fun uploadClientVideo(fileName: UUID, video: ByteArray) =
-        upload(fileName = fileName, content = video, contentType = videoContentType, bucketName = clientsVideosBucket)
+    override fun uploadPatientVideo(fileName: UUID, video: ByteArray) =
+        upload(fileName = fileName, content = video, contentType = videoContentType, bucketName = patientsVideosBucket)
 
-    override fun downloadClientVideo(fileName: UUID): ByteArray =
-        download(fileName = fileName, bucketName = clientsVideosBucket)
+    override fun downloadPatientVideo(fileName: UUID): ByteArray =
+        download(fileName = fileName, bucketName = patientsVideosBucket)
 
-    override fun uploadMonitorCredentials(fileName: UUID, file: ByteArray) =
-        upload(fileName = fileName, content = file, contentType = pdfContentType, bucketName = monitorCredentialsBucket)
+    override fun uploadPhysiotherapistCredentials(fileName: UUID, file: ByteArray) =
+        upload(fileName = fileName, content = file, contentType = pdfContentType, bucketName = physiotherapistCredentialsBucket)
 
-    override fun downloadMonitorCredentials(fileName: UUID): ByteArray =
-        download(fileName = fileName, bucketName = monitorCredentialsBucket)
+    override fun downloadPhysiotherapistCredentials(fileName: UUID): ByteArray =
+        download(fileName = fileName, bucketName = physiotherapistCredentialsBucket)
 
     override fun downloadExampleVideo(exerciseID: UUID): ByteArray =
         download(fileName = exerciseID, bucketName = exercisesPreviewsBucket)
 
     override fun deleteWithID(fileName: UUID) {
-        val buckets = listOf(userPhotosBucket, monitorCredentialsBucket, clientsVideosBucket)
+        val buckets = listOf(userPhotosBucket, physiotherapistCredentialsBucket, patientsVideosBucket)
 
         for (bucketName in buckets) {
             val blobToDelete: BlobId? = storage.list(bucketName)
@@ -85,17 +85,17 @@ class CloudStorageUtilsImpl : CloudStorageUtils {
         upload(fileName = fileName, file, contentType = videoContentType, exercisesPreviewsBucket)
 
     override fun getAllCredentialsIDs(): List<UUID> =
-        storage.list(monitorCredentialsBucket).iterateAll().toList().map { UUID.fromString(it.name) }
+        storage.list(physiotherapistCredentialsBucket).iterateAll().toList().map { UUID.fromString(it.name) }
 
     override fun deleteCredential(fileName: UUID) {
-        deleteFile(bucketName = monitorCredentialsBucket, fileName = fileName.toString())
+        deleteFile(bucketName = physiotherapistCredentialsBucket, fileName = fileName.toString())
     }
 
-    override fun getClientsVideosIDs(): List<UUID> =
-        storage.list(clientsVideosBucket).iterateAll().toList().map { UUID.fromString(it.name) }
+    override fun getPatientsVideosIDs(): List<UUID> =
+        storage.list(patientsVideosBucket).iterateAll().toList().map { UUID.fromString(it.name) }
 
-    override fun deleteClientVideo(fileName: UUID) =
-        deleteFile(bucketName = clientsVideosBucket, fileName = fileName.toString())
+    override fun deletePatientVideo(fileName: UUID) =
+        deleteFile(bucketName = patientsVideosBucket, fileName = fileName.toString())
 
     override fun getUserPhotosIDs(): List<UUID> =
         storage.list(userPhotosBucket).iterateAll().toList().map { UUID.fromString(it.name) }

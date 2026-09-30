@@ -4,7 +4,7 @@ plugins {
     val kotlinVersion = "1.6.21"
     id("org.springframework.boot") version "2.7.9"
     id("io.spring.dependency-management") version "1.0.15.RELEASE"
-    id("org.jlleitschuh.gradle.ktlint") version "11.3.1"
+    //id("org.jlleitschuh.gradle.ktlint") version "11.3.1"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
 }
@@ -40,12 +40,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-cache:2.4.0")
 
-
     // JDBI dependencies
     implementation("org.jdbi:jdbi3-core:3.35.0")
     implementation("org.jdbi:jdbi3-kotlin:3.35.0")
     implementation("org.jdbi:jdbi3-postgres:3.33.0")
-    implementation("org.postgresql:postgresql:42.5.1")
 
     // JWT implementation
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")

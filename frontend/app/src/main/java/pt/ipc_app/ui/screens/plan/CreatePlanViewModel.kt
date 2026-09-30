@@ -65,16 +65,18 @@ class CreatePlanViewModel(
         plan: PlanInput,
         onSuccess: () -> Unit = { }
     ) {
+        if (_planState.value == ProgressState.WAITING) return
+        _planState.value = ProgressState.WAITING
         launchAndExecuteRequest(
             request = {
                 _planState.value = ProgressState.WAITING
-                plansService.createPlan(
+                try { plansService.createPlan(
                     plan = plan,
-                    monitorId = sessionManager.userUUID,
+                    physiotherapistId = sessionManager.userUUID,
                     token = sessionManager.userLoggedIn.accessToken
                 ).also {
                     _planState.value = if (it is APIResult.Success) ProgressState.FINISHED else ProgressState.IDLE
-                }
+                } } catch (e: Exception) { _planState.value = ProgressState.IDLE; throw e }
 
             },
             onSuccess = {

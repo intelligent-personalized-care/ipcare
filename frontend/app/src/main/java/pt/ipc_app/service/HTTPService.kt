@@ -41,10 +41,10 @@ abstract class HTTPService(
             val resJson = JsonReader(body.charStream())
 
             try {
-                if (response.isSuccessful && body.contentType() == ContentType.JSON.mediaType)
-                    APIResult.Success(jsonEncoder.fromJson(resJson, T::class.java))
-                else if (response.isSuccessful && body.contentLength() == 0L)
+                if (response.isSuccessful && (response.code == 204 || body.contentLength() == 0L))
                     APIResult.Success(EmptyResponseBody() as T)
+                else if (response.isSuccessful && body.contentType()?.subtype == "json")
+                    APIResult.Success(jsonEncoder.fromJson(resJson, T::class.java))
                 else if (!response.isSuccessful && response.code.toString().startsWith("5"))
                     APIResult.Failure(
                         ResponseError(
@@ -52,7 +52,7 @@ abstract class HTTPService(
                             message = "We're sorry, but something went wrong. Please try again later."
                         )
                     )
-                else if (!response.isSuccessful && body.contentType() == ContentType.PROBLEM_JSON.mediaType)
+                else if (!response.isSuccessful && body.contentType()?.subtype == "problem+json")
                     APIResult.Failure(jsonEncoder.fromJson(resJson, ProblemJson::class.java))
                 else throw UnexpectedResponseException(response)
 
@@ -166,4 +166,3 @@ abstract class HTTPService(
         const val BEARER_TOKEN = "Bearer"
     }
 }
-

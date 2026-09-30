@@ -6,7 +6,7 @@ import java.util.*
 
 @Component
 class TransactionManagerImpl(
-    private val jdbi: Jdbi,
+    private val jdbi: Jdbi
 ) : TransactionManager {
 
     override fun <R> run(fileName: UUID?, block: (Transaction) -> R): R {

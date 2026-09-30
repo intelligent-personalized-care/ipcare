@@ -24,7 +24,6 @@ import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseDetection
 import com.google.mlkit.vision.pose.PoseDetector
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
-import pt.ipc_app.domain.exercise.Exercise
 import pt.ipc_app.mlkit.GraphicOverlay
 import pt.ipc_app.mlkit.vision.CameraXLiveViewModel
 import pt.ipc_app.mlkit.vision.VisionProcessorBase
@@ -33,7 +32,6 @@ import pt.ipc_app.mlkit.vision.VisionProcessorBase
 class PoseDetectorProcessor(
   context: Context,
   options: PoseDetectorOptions,
-  private val exercise: Exercise,
   private  val viewModel: CameraXLiveViewModel
 ): VisionProcessorBase<Pose>(context) {
   private val detector: PoseDetector
@@ -50,11 +48,12 @@ class PoseDetectorProcessor(
     results: Pose,
     graphicOverlay: GraphicOverlay
   ) {
-    //added exercise to monitor the different exercises in PoseGraphic
-    graphicOverlay.add(PoseGraphic(graphicOverlay, results, exercise, viewModel))
+    viewModel.onPose(results, graphicOverlay.imageWidth, graphicOverlay.imageHeight)
+    graphicOverlay.add(PoseGraphic(graphicOverlay, results, viewModel.selectedLandmarks, viewModel.state.value.measurement))
   }
 
   override fun onFailure(e: Exception) {
+    viewModel.trackingLost()
     Log.e(TAG, "Pose detection failed!", e)
   }
 

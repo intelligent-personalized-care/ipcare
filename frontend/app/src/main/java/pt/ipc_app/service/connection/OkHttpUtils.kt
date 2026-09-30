@@ -36,7 +36,8 @@ suspend fun <T> Request.send(okHttpClient: OkHttpClient, handler: (Response) -> 
 
             override fun onResponse(call: Call, response: Response) {
                 try {
-                    continuation.resume(handler(response))
+                    val result = response.use { handler(it) }
+                    continuation.resume(result)
                     Log.println(Log.WARN, REQUEST_TAG, "Success: " + response.body)
                 } catch (t: Throwable) {
                     Log.println(Log.WARN, REQUEST_TAG, "t: " + t.message)

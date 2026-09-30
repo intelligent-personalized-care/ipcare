@@ -2,8 +2,11 @@
     <string name="app_name">IPCare</string>
 
     <string name="choose_role_screen_title">Choose a Role</string>
-    <string name="register_client_screen_title">Register Client</string>
-    <string name="register_monitor_screen_title">Register Monitor</string>
+    <string name="choose_role_subtitle">Select your role to create an account</string>
+    <string name="choose_role_patient_desc">I want to follow exercise plans with a physiotherapist</string>
+    <string name="choose_role_physiotherapist_desc">I want to create plans and follow up patients</string>
+    <string name="register_patient_screen_title">Register Patient</string>
+    <string name="register_physiotherapist_screen_title">Register Physiotherapist</string>
     <string name="login_screen_title">Login</string>
 
     <string name="register_screen_label_name">Name</string>
@@ -14,8 +17,8 @@
     <string name="height">Height</string>
     <string name="physicalCondition">Physical Condition</string>
 
-    <string name="client">Client</string>
-    <string name="monitor">Monitor</string>
+    <string name="patient">Patient</string>
+    <string name="physiotherapist">Physiotherapist</string>
     <string name="select">Select</string>
 
     <string name="already_have_account">Already have an account? Login here</string>
@@ -31,20 +34,22 @@
     <string name="create_plan_screen_label_exercise_sets">Sets</string>
     <string name="create_plan_screen_label_exercise_reps">Reps</string>
 
-    <string name="client_exercise_screen_label_feedback">Feedback</string>
-    <string name="monitor_details_screen_label_request">Comment</string>
+    <string name="patient_exercise_screen_label_feedback">Feedback</string>
+    <string name="physiotherapist_details_screen_label_request">Comment</string>
 
     <string name="search_label">Search…</string>
-    <string name="search_monitors">Search Monitors</string>
-    <string name="search_clients">Search Clients</string>
+    <string name="search_physiotherapists">Search Physiotherapists</string>
+    <string name="find_physiotherapist_title">Find a Physiotherapist</string>
+    <string name="find_physiotherapist_subtitle">You don\'t have a physiotherapist yet. Search for one to get started with your exercise plan.</string>
+    <string name="search_patients">Search Patients</string>
     <string name="search_results">Results</string>
 
-    <string name="client_requests">Client Requests</string>
-    <string name="my_clients">My Clients</string>
+    <string name="patient_requests">Patient Requests</string>
+    <string name="my_patients">My Patients</string>
 
     <string name="exercises_title">Exercises</string>
-    <string name="monitor_details_title">Monitor Details</string>
-    <string name="client_details_title">Client Details</string>
+    <string name="physiotherapist_details_title">Physiotherapist Details</string>
+    <string name="patient_details_title">Patient Details</string>
     <string name="profile_title">Profile</string>
     <string name="about_title">Authors</string>
     <string name="about_repo_github">"Code for this app is available at: "</string>
@@ -52,16 +57,137 @@
 
     <string name="activity_info_no_suitable_app">Could not find a suitable application</string>
 
+    <!-- Login -->
+    <string name="login_tagline">Intelligent Personalized Care</string>
+    <string name="login_welcome">Welcome back! Please login to continue</string>
+    <string name="login_button">Login</string>
+
+    <!-- Exercises list -->
+    <string name="page_label">Page %d</string>
+    <string name="no_exercises_available">No exercises available</string>
+
+    <!-- Patient home -->
+    <string name="your_physiotherapist">Your Physiotherapist</string>
+    <string name="no_plan_yet">You don\'t have an active exercise plan yet.</string>
+    <string name="select_day">Select Day</string>
+    <string name="todays_exercises">Today\'s Exercises</string>
+    <string name="no_exercises_this_day">No exercises scheduled for this day</string>
+
+    <!-- Physiotherapist home -->
+    <string name="exercises_to_review">Exercises To Review</string>
+    <string name="no_exercises_to_review">No exercises to review</string>
+    <string name="patients_label">Patients</string>
+    <string name="requests_label">Requests</string>
+    <string name="to_review_label">To Review</string>
+
+    <!-- Exercise info -->
+    <string name="description">Description</string>
+    <string name="start">Start</string>
+
+    <!-- Patient exercise (feedback) -->
+    <string name="select_set">Select set</string>
+    <string name="feedback_label">Feedback</string>
+    <string name="physiotherapist_feedback">Physiotherapist feedback</string>
+    <string name="send_feedback">Send feedback</string>
+
+    <!-- Choose camera/sensor -->
+    <string name="choose_detection_method">Choose Detection Method</string>
+    <string name="choose_detection_subtitle">Select how you want to track your exercises</string>
+    <string name="use_camera">Use Camera</string>
+    <string name="use_camera_desc">Track exercises using your device camera with computer vision</string>
+    <string name="use_sensors">Use Sensors</string>
+    <string name="use_sensors_desc">Connect Bluetooth sensors for precise movement tracking</string>
+
+    <!-- Profile -->
+    <string name="credential">Credential</string>
+    <string name="submit_credential">Submit Credential</string>
+
+    <!-- Sensor screen -->
+    <string name="arm_raise_exercise">Arm Raise Exercise</string>
+    <string name="connect_sensor_desc">Connect your sensor and perform arm raises</string>
+    <string name="bluetooth_required">Bluetooth permissions are required to connect</string>
+    <string name="progress">Progress</string>
+    <string name="target_degrees">Target: 45°</string>
+    <string name="sensor_data">Sensor Data</string>
+    <string name="sensor_live_section">Live session</string>
+    <string name="sensor_roll_chart">Roll (real time)</string>
+    <string name="sensor_clear_chart">Clear chart</string>
+    <string name="sensor_pitch_fmt">Pitch: %1$.1f°</string>
+    <string name="sensor_roll_fmt">Roll: %1$.1f°</string>
+    <string name="sensor_velocity_fmt">Speed: %1$.1f °/s</string>
+    <string name="sensor_status_label">Status</string>
+    <string name="sensor_waiting_samples">Connect and move - the chart fills as samples arrive.</string>
+    <string name="ble_grant_permissions">Grant permissions</string>
+    <string name="ble_status_section">Bluetooth status</string>
+    <string name="ble_device_section">Device</string>
+    <string name="ble_received_raw">Last line (raw)</string>
+    <string name="ble_send_text">Send text</string>
+    <string name="ble_type_message">Type a message</string>
+    <string name="ble_not_found_yet">Not found yet</string>
+    <string name="label_yes">Yes</string>
+    <string name="label_no">No</string>
+    <string name="ble_row_supported">BLE supported: %1$s</string>
+    <string name="ble_row_enabled">Bluetooth enabled: %1$s</string>
+    <string name="ble_row_permissions">Permissions granted: %1$s</string>
+    <string name="ble_scan">Scan</string>
+    <string name="ble_stop_scan">Stop scan</string>
+    <string name="ble_connect">Connect</string>
+    <string name="ble_disconnect">Disconnect</string>
+    <string name="ble_connecting">Connecting…</string>
+    <string name="ble_read">Read</string>
+    <string name="ble_gatt_status">Connected: %1$s · Services: %2$s</string>
+    <string name="ble_issue_not_supported">This device does not support Bluetooth Low Energy.</string>
+    <string name="ble_issue_enable_bt">Turn on Bluetooth to use the sensor.</string>
+    <string name="ble_issue_need_permissions">Allow Bluetooth permissions to find and connect to the sensor.</string>
+    <string name="sensor_angle_target_max">Target max (°)</string>
+    <string name="sensor_angle_target_min">Target min (°)</string>
+    <string name="sensor_session_reps">Reps this set: %1$d / %2$d</string>
+    <string name="sensor_session_sets">Sets: %1$d / %2$d</string>
+    <string name="sensor_connect_hint">Connect your ESP32-C3 sensor to start.</string>
+
+    <!-- Plan -->
+    <string name="plan_of">of</string>
+
+    <!-- Patient details -->
+    <string name="patient_plans">Patient Plans</string>
+    <string name="associate_plan">Associate Plan</string>
+    <string name="no_plans_to_associate">No plans available to associate. Create a plan first.</string>
+    <string name="choose_plan">Choose plan</string>
+    <string name="select_plan_placeholder">Select a plan</string>
+    <string name="associate_button">Associate</string>
+    <string name="remove_connection">Remove connection</string>
+
+    <!-- Misc -->
+    <string name="day_off">Day off</string>
+    <string name="submit">Submit</string>
+    <string name="ok">OK</string>
+    <string name="error_accessing_server">Error accessing server</string>
+    <string name="you_need_to_authenticate">You need to authenticate yourself.</string>
+    <string name="current_angle">Current Angle</string>
+    <string name="reps_label">Reps</string>
+    <string name="set_label">Set</string>
+    <string name="sensor_reps_feedback">Reps: %1$d / %2$d in this set</string>
+    <string name="sensor_set_feedback">Set %1$d / %2$d</string>
+    <string name="sensor_reps_remaining">%d rep(s) left in this set</string>
+    <string name="sensor_sets_remaining">%d set(s) to go</string>
+    <string name="sensor_set_complete">Set complete!</string>
+    <!-- Content descriptions (a11y) -->
+    <string name="cd_emoji">Emoji</string>
+    <string name="cd_select">Select</string>
+    <string name="cd_star">Star</string>
+    <string name="no_patients_yet">You don\'t have any patients yet.</string>
+    <string name="no_plans_yet">This patient doesn\'t have any associated plans yet.</string>
+
     <!-- ########################### ML KIT ########################### -->
 
     <!-- Settings related strings. -->
     <string name="pref_screen" translatable="false">ps</string>
-    <string name="pref_screen_title_camerax_live_preview" translatable="false">CameraX live preview settings</string>
-    <string name="pref_category_pose_detection" translatable="false">Pose Detection</string>
+    <string name="pref_screen_title_camerax_live_preview">CameraX live preview settings</string>
+    <string name="pref_category_pose_detection">Pose Detection</string>
 
     <!-- Strings for camera settings. -->
     <string name="pref_category_key_camera" translatable="false">pckc</string>
-    <string name="pref_category_title_camera" translatable="false">Camera</string>
+    <string name="pref_category_title_camera">Camera</string>
     <string name="pref_key_rear_camera_preview_size" translatable="false">rcpvs</string>
     <string name="pref_key_rear_camera_picture_size" translatable="false">rcpts</string>
     <string name="pref_key_front_camera_preview_size" translatable="false">fcpvs</string>
@@ -69,12 +195,12 @@
     <string name="pref_key_camerax_rear_camera_target_resolution" translatable="false">crctas</string>
     <string name="pref_key_camerax_front_camera_target_resolution" translatable="false">cfctas</string>
     <string name="pref_key_camera_live_viewport" translatable="false">clv</string>
-    <string name="pref_title_rear_camera_preview_size" translatable="false">Rear camera preview size</string>
-    <string name="pref_title_front_camera_preview_size" translatable="false">Front camera preview size</string>
-    <string name="pref_title_camerax_rear_camera_target_resolution" translatable="false">CameraX rear camera target resolution</string>
-    <string name="pref_title_camerax_front_camera_target_resolution" translatable="false">CameraX front camera target resolution</string>
-    <string name="pref_title_camera_live_viewport" translatable="false">Enable enhancement of live camera view</string>
-    <string name="pref_summary_camera_live_viewport" translatable="false">Do not block camera preview drawing on detection, detection might be slower</string>
+    <string name="pref_title_rear_camera_preview_size">Rear camera preview size</string>
+    <string name="pref_title_front_camera_preview_size">Front camera preview size</string>
+    <string name="pref_title_camerax_rear_camera_target_resolution">CameraX rear camera target resolution</string>
+    <string name="pref_title_camerax_front_camera_target_resolution">CameraX front camera target resolution</string>
+    <string name="pref_title_camera_live_viewport">Enable enhancement of live camera view</string>
+    <string name="pref_summary_camera_live_viewport">Do not block camera preview drawing on detection, detection might be slower</string>
 
     <!-- Strings for pose detector performance mode preference. -->
     <string name="pref_title_pose_detector_performance_mode">Performance mode</string>
@@ -84,16 +210,438 @@
     <string name="pref_entries_pose_detector_performance_mode_accurate">Accurate</string>
 
     <!-- Strings for pose detector prefer gpu preference. -->
-    <string name="pref_title_pose_detector_prefer_gpu" translatable="false">Prefer using GPU</string>
+    <string name="pref_title_pose_detector_prefer_gpu">Prefer using GPU</string>
     <string name="pref_key_pose_detector_prefer_gpu" translatable="false">pdpg</string>
-    <string name="pref_summary_pose_detector_prefer_gpu" translatable="false">If enabled, GPU will be used as long as it is available, stable and returns correct results. In this case, the detector will not check if GPU is really faster than CPU.</string>
+    <string name="pref_summary_pose_detector_prefer_gpu">If enabled, GPU will be used as long as it is available, stable and returns correct results. In this case, the detector will not check if GPU is really faster than CPU.</string>
 
     <!-- The following entry values must match the ones in PoseDetectorOptions#PerformanceMode -->
     <string name="pref_entry_values_pose_detector_performance_mode_fast" translatable="false">1</string>
     <string name="pref_entry_values_pose_detector_performance_mode_accurate" translatable="false">2</string>
 
-    <string name="menu_item_settings" translatable="false">Settings</string>
+    <string name="menu_item_settings">Settings</string>
 
-    <string name="pref_category_info" translatable="false">Detection Info</string>
+    <string name="pref_category_info">Detection Info</string>
 
+    <string name="voice_feedback">Voice feedback</string>
+    <string name="no_physiotherapists_found">No physiotherapists found</string>
+    <string name="try_another_physiotherapist_name">Try another name or search without a name.</string>
+    <string name="video_fullscreen">Full screen</string>
+    <string name="video_exit_fullscreen">Exit full screen</string>
+    <string name="modality_loading">Loading availability…</string>
+    <string name="modality_unavailable">Not available for this exercise</string>
+    <!-- Localised exercise, plan and profile interface -->
+    <string name="ui_voice_feedback">Voice feedback</string>
+    <string name="ui_voice_unavailable_enable_a_voice_for_the_app_language_in_your_pho">Voice unavailable. Enable a voice for the app language in your phone’s text-to-speech settings.</string>
+    <string name="ui_request_supervision">Request supervision</string>
+    <string name="ui_send_request">Send request</string>
+    <string name="ui_supervision_request_sent">Supervision request sent</string>
+    <string name="ui_remove_connection">Remove connection</string>
+    <string name="ui_did_you_use_weights_for_this_set">Did you use weights for this set?</string>
+    <string name="ui_weight_used_kg">Weight used (kg)</string>
+    <string name="ui_e_g_2_5">e.g. 2.5</string>
+    <string name="ui_enter_the_external_weight_used_for_this_set_in_kilograms">Enter the external weight used for this set in kilograms.</string>
+    <string name="ui_without_weights">Without weights</string>
+    <string name="ui_with_weights">With weights</string>
+    <string name="ui_target_angle">Target angle (°)</string>
+    <string name="ui_return_angle">Return angle (°)</string>
+    <string name="ui_minimum_raising_time_ms">Minimum raising time (ms)</string>
+    <string name="ui_hold_duration_seconds">Hold duration (seconds)</string>
+    <string name="ui_repetition_cooldown_ms">Repetition cooldown (ms)</string>
+    <string name="ui_minimum_speed_s">Minimum speed (°/s)</string>
+    <string name="ui_minimum_pitch">Minimum pitch (°)</string>
+    <string name="ui_maximum_pitch">Maximum pitch (°)</string>
+    <string name="ui_minimum_roll">Minimum roll (°)</string>
+    <string name="ui_maximum_roll">Maximum roll (°)</string>
+    <string name="ui_exercise_angles">Exercise angles</string>
+    <string name="ui_no_profile_defined_enter_suitable_parameters_for_this_exercise_an">No profile defined. Enter suitable parameters for this exercise and patient.</string>
+    <string name="ui_targets_and_timings_apply_to_camera_and_sensors_for_this_exercise">Targets and timings apply to camera and sensors for this exercise on this day only.</string>
+    <string name="ui_hide_advanced_options">Hide advanced options</string>
+    <string name="ui_advanced_options">Advanced options</string>
+    <string name="ui_primary_axis_limits_apply_after_reversing_direction_the_other_axi">Primary axis limits apply after reversing direction. The other axis retains its measured sign.</string>
+    <string name="ui_use_roll_as_the_primary_axis">Use roll as the primary axis</string>
+    <string name="ui_reverse_sensor_direction">Reverse sensor direction</string>
+    <string name="ui_check_angles_limits_and_timings_hold_duration_must_be_0_60_second">Check angles, limits and timings. Hold duration must be 0–60 seconds.</string>
+    <string name="ui_save_custom_settings">Save custom settings</string>
+    <string name="ui_restore_catalogue_defaults">Restore catalogue defaults</string>
+    <string name="ui_create_plan">Create plan</string>
+    <string name="ui_organise_days_and_customise_each_exercise">Organise days and customise each exercise</string>
+    <string name="ui_plan_name">Plan name</string>
+    <string name="ui_e_g_knee_mobility">e.g. Knee mobility</string>
+    <string name="ui_plan_days">Plan days</string>
+    <string name="ui_remove_day">Remove day</string>
+    <string name="ui_start_by_adding_an_exercise">Start by adding an exercise</string>
+    <string name="ui_you_can_also_leave_this_as_a_rest_day">You can also leave this as a rest day.</string>
+    <string name="ui_exercise">Exercise</string>
+    <string name="ui_catalogue_defaults">Catalogue defaults</string>
+    <string name="ui_edit">Edit</string>
+    <string name="ui_remove">Remove</string>
+    <string name="ui_add_exercise">Add exercise</string>
+    <string name="ui_saving">Saving…</string>
+    <string name="ui_choose_exercise">Choose exercise</string>
+    <string name="ui_close">Close</string>
+    <string name="ui_already_added_edit">Already added · edit</string>
+    <string name="ui_no_exercises_on_this_page">No exercises on this page.</string>
+    <string name="ui_previous_page">Previous page</string>
+    <string name="ui_next_page">Next page</string>
+    <string name="ui_set_the_exercise_dose_for_this_day">Set the exercise dose for this day.</string>
+    <string name="ui_sets">Sets</string>
+    <string name="ui_repetitions">Repetitions</string>
+    <string name="ui_customise_angles">Customise angles</string>
+    <string name="ui_only_for_this_exercise_in_the_plan">Only for this exercise in the plan</string>
+    <string name="ui_use_catalogue_defaults">Use catalogue defaults</string>
+    <string name="ui_the_app_uses_the_values_from_the_database">The app uses the values from the database.</string>
+    <string name="ui_add_to_day">Add to day</string>
+    <string name="ui_save_changes">Save changes</string>
+    <string name="ui_cancel">Cancel</string>
+    <string name="ui_with_weights_amount_not_recorded">With weights - amount not recorded</string>
+    <string name="ui_performed_without_weights">Performed without weights</string>
+    <string name="ui_weight_use_not_specified">Weight use not specified</string>
+    <string name="ui_sensor_results">Sensor results</string>
+    <string name="ui_pitch_blue_roll_green">Pitch: blue · Roll: green</string>
+    <string name="ui_execution_rating">Execution rating</string>
+    <string name="ui_2_of_2_perform_exercise">2 of 2 · Perform exercise</string>
+    <string name="ui_1_of_2_prepare_sensors">1 of 2 · Prepare sensors</string>
+    <string name="ui_your_physiotherapist_needs_to_configure_the_limits_for_this_exerc">Your physiotherapist needs to configure the limits for this exercise.</string>
+    <string name="ui_refresh_profile">Refresh profile</string>
+    <string name="ui_position">Position</string>
+    <string name="ui_connect">Connect</string>
+    <string name="ui_calibrate">Calibrate</string>
+    <string name="ui_view_result">View result</string>
+    <string name="ui_sensors_in_position_continue">Sensors in position · continue</string>
+    <string name="ui_connect_the_main_module">Connect the main module</string>
+    <string name="ui_the_smaller_sensor_connects_through_the_cable">The smaller sensor connects through the cable.</string>
+    <string name="ui_sensors_connected">Sensors connected</string>
+    <string name="ui_connecting">Connecting…</string>
+    <string name="ui_look_for_esp32_c3_dual_imu">Look for ESP32-C3_DUAL_IMU</string>
+    <string name="ui_continue_to_calibration">Continue to calibration</string>
+    <string name="ui_adopt_the_starting_position">Adopt the starting position</string>
+    <string name="ui_follow_the_starting_position_prescribed_by_your_physiotherapist">Follow the starting position prescribed by your physiotherapist.</string>
+    <string name="ui_adjust_sensor_orientation">Adjust sensor orientation</string>
+    <string name="ui_the_angle_should_increase_during_movement_adjustments_require_rec">The angle should increase during movement. Adjustments require recalibration.</string>
+    <string name="ui_use_roll_axis_off_pitch">Use roll axis (off: pitch)</string>
+    <string name="ui_reverse_direction">Reverse direction</string>
+    <string name="ui_check_movement">Check movement</string>
+    <string name="ui_perform_the_movement_without_twisting_your_limb_the_exercise_angl">Perform the movement without twisting your limb. The exercise angle should increase. Then return to the starting position to begin the set.</string>
+    <string name="ui_keep_still_for_3_seconds">Keep still for 3 seconds.</string>
+    <string name="ui_calibrating_hold_your_position">Calibrating… hold your position</string>
+    <string name="ui_calibrate_again">Calibrate again</string>
+    <string name="ui_calibrate_starting_position">Calibrate starting position</string>
+    <string name="ui_calibration_complete">Calibration complete</string>
+    <string name="ui_view_unsaved_result">View unsaved result</string>
+    <string name="ui_continue_to_exercise">Continue to exercise</string>
+    <string name="ui_placement_and_calibration">← Placement and calibration</string>
+    <string name="ui_exercise_complete">Exercise complete.</string>
+    <string name="ui_finish">Finish</string>
+    <string name="ui_starting">Starting…</string>
+    <string name="ui_set_in_progress">Set in progress</string>
+    <string name="ui_stop_set">Stop set</string>
+    <string name="ui_save_set">Save set</string>
+    <string name="ui_set_complete">Set complete</string>
+    <string name="ui_connect_the_sensors_to_continue">Connect the sensors to continue</string>
+    <string name="ui_ready_to_start">Ready to start</string>
+    <string name="ui_current_angle">Current angle</string>
+    <string name="ui_time_remaining">Time remaining</string>
+    <string name="ui_hold_at_target">Hold at target</string>
+    <string name="ui_hide_details">Hide details</string>
+    <string name="ui_sensor_details">Sensor details</string>
+    <string name="ui_0_is_the_calibrated_position_the_chart_shows_the_exercise_angle">0° is the calibrated position. The chart shows the exercise angle.</string>
+    <string name="ui_clear_chart">Clear chart</string>
+    <string name="ui_hold_the_starting_position">Hold the starting position</string>
+    <string name="ui_show_the_joint_from_the_side_to_the_camera">Show the joint from the side to the camera</string>
+    <string name="ui_adjust_your_starting_position_and_calibrate_again">Adjust your starting position and calibrate again</string>
+    <string name="ui_return_to_the_starting_position_without_forcing">Return to the starting position without forcing</string>
+    <string name="ui_hold_your_position">Hold your position</string>
+    <string name="ui_return_to_the_starting_position">Return to the starting position</string>
+    <string name="ui_extend_slowly">Extend slowly</string>
+    <string name="ui_flex_slowly">Flex slowly</string>
+    <string name="ui_position_calibrated">Position calibrated</string>
+    <string name="ui_prepare_the_starting_position">Prepare the starting position</string>
+    <string name="ui_back">Back</string>
+    <string name="ui_camera_exercise">Camera exercise</string>
+    <string name="ui_switch_camera">Switch camera</string>
+    <string name="ui_starting_in">Starting in</string>
+    <string name="ui_show_the_starting_position_to_the_camera">Show the starting position to the camera</string>
+    <string name="ui_wrist_2d_estimate">Wrist · 2D estimate</string>
+    <string name="ui_voice">Voice</string>
+    <string name="ui_start">Start</string>
+    <string name="ui_target">Target</string>
+    <string name="ui_hold">Hold</string>
+    <string name="ui_loading_plan_settings">Loading plan settings…</string>
+    <string name="ui_try_again">Try again</string>
+    <string name="ui_exercise_complete_138">Exercise complete</string>
+    <string name="ui_finish_free_practice">Finish free practice</string>
+    <string name="ui_save_and_continue">Save and continue</string>
+    <string name="ui_preparing_video">Preparing video…</string>
+    <string name="ui_support_your_forearm_horizontally_palm_down_film_from_the_side_at">Support your forearm horizontally, palm down. Film from the side at hand height with your fingers extended.</string>
+    <string name="ui_film_from_the_side_support_your_arm_and_start_with_your_elbow_ben">Film from the side. Support your arm and start with your elbow bent.</string>
+    <string name="ui_film_from_the_side_keep_your_arm_by_your_body_and_start_with_your">Film from the side. Keep your arm by your body and start with your elbow extended.</string>
+    <string name="ui_sit_with_your_knee_bent_film_from_the_side_showing_hip_knee_and_a">Sit with your knee bent. Film from the side, showing hip, knee and ankle.</string>
+    <string name="ui_start_with_your_leg_extended_film_from_the_side_showing_hip_knee">Start with your leg extended. Film from the side, showing hip, knee and ankle.</string>
+    <string name="ui_left_side">Left side</string>
+    <string name="ui_right_side">Right side</string>
+    <string name="ui_return_to_the_starting_position_to_start_counting">Return to the starting position to start counting.</string>
+    <string name="ui_after_calibration_the_set_starts_automatically_in_3_seconds">After calibration, the set starts automatically in 3 seconds.</string>
+    <string name="ui_recalibrate">Recalibrate</string>
+    <string name="ui_cancel_start">Cancel start</string>
+    <string name="ui_prepare_to_start">Prepare to start</string>
+    <string name="ui_my_plans">My plans</string>
+    <string name="ui_rehabilitation_plan_library">Rehabilitation plan library</string>
+    <string name="ui_plan_template">Plan template</string>
+    <string name="ui_all_plans">← All plans</string>
+    <string name="ui_you_have_no_plans_yet_create_your_first_plan_to_add_it_to_your_li">You have no plans yet. Create your first plan to add it to your library.</string>
+    <string name="ui_view_plan">View plan →</string>
+    <string name="ui_rest">Rest</string>
+    <string name="ui_your_movement">Your movement</string>
+    <string name="ui_less_information">Less information</string>
+    <string name="ui_how_does_it_work">How does it work?</string>
+    <string name="ui_reach_the_target_and_hold_for_the_specified_duration_then_return">Reach the target and hold for the specified duration, then return. Angles are measured from the calibrated position (0°).</string>
+    <string name="ui_set_complete_save_the_result_to_continue">Set complete. Save the result to continue.</string>
+    <string name="ui_view_exercise">View exercise</string>
+    <string name="ui_search_for_physiotherapists_to_connect">Search for physiotherapists to connect…</string>
+    <string name="ui_submit_credential">Submit credential</string>
+    <string name="ui_credential">Credential</string>
+    <string name="ui_credential_approved">Credential approved</string>
+    <string name="ui_credential_awaiting_approval">Credential awaiting approval</string>
+    <string name="ui_credential_rejected">Credential rejected</string>
+    <string name="ui_collapse">Collapse</string>
+    <string name="ui_expand">Expand</string>
+    <string name="ui_search">Search</string>
+    <string name="ui_accept_patient">Accept patient</string>
+    <string name="ui_decline_patient">Decline patient</string>
+    <string name="ui_change_profile_picture">Change profile picture</string>
+    <string name="execution_load">Weight used: %1$s %2$s</string>
+    <string name="execution_summary">%1$d repetitions · %2$d s</string>
+    <string name="execution_profile">Profile: %1$s · direction %2$d · target %3$.1f° · return %4$.1f° · hold %5$.1f s</string>
+    <string name="execution_pitch_range">Relative pitch: %1$s° to %2$s°</string>
+    <string name="execution_roll_range">Relative roll: %1$s° to %2$s°</string>
+    <string name="plan_day_number">Day %1$d</string>
+    <plurals name="exercise_count">
+        <item quantity="one">%d exercise</item>
+        <item quantity="other">%d exercises</item>
+    </plurals>
+    <string name="exercise_dose">%1$d sets · %2$d repetitions</string>
+    <string name="custom_target">Custom · target %1$.1f°</string>
+    <string name="plan_summary">%1$d days · %2$d exercises</string>
+    <string name="plan_day_settings">Day %1$d · sets and angles</string>
+    <string name="page_number">Page %1$d</string>
+    <plurals name="plan_duration_days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <string name="start_set_number">Start set %1$d</string>
+    <string name="repetition_progress">%1$d / %2$d repetitions</string>
+    <string name="set_progress">Set %1$d / %2$d</string>
+    <string name="sensor_target_bound">Target ≥ %1$s°</string>
+    <string name="sensor_return_bound">Return ≤ %1$s°</string>
+    <string name="exercise_angle_reading">Exercise angle: %1$s</string>
+    <string name="calibrated_angle_reading">Current angle: %1$s. It should be close to 0° in the starting position.</string>
+    <string name="camera_target">Target %1$d°</string>
+    <string name="camera_return">Return to %1$d°</string>
+    <string name="camera_set_progress">Set %1$d/%2$d · %3$d/%4$d reps</string>
+    <string name="rating_star_value">%1$d out of 5 stars</string>
+    <string name="days_range">Days %1$d–%2$d of %3$d</string>
+    <string name="patient_request_message">%1$s sent you a request</string>
+    <string name="physiotherapist_review_summary">%1$s / 5 · %2$d reviews</string>
+    <plurals name="remaining_exercises">
+        <item quantity="one">%d exercise to do</item>
+        <item quantity="other">%d exercises to do</item>
+    </plurals>
+    <string name="sensor_return_instruction">Return to ≤ %1$s° to count the repetition.</string>
+    <string name="sensor_remaining_time">Approximately %1$s s remaining</string>
+    <string name="execution_loading">Loading…</string>
+    <string name="execution_not_complete">This set has not been completed yet.</string>
+    <string name="execution_load_failed">Unable to load the result.</string>
+    <string name="execution_defaults_restored">Catalogue defaults restored for this exercise.</string>
+    <string name="execution_profile_saved">Profile saved.</string>
+    <string name="execution_feedback_saved">Feedback saved.</string>
+    <string name="execution_feedback_failed">Unable to save feedback. Try again.</string>
+    <string name="plan_profile_missing">This exercise has no movement profile yet.</string>
+    <string name="plan_numbers_required">Enter valid numbers.</string>
+    <string name="plan_hold_invalid">Hold duration must be between 0 and 60 seconds.</string>
+    <string name="plan_angles_invalid">The target must exceed the return angle and both must respect the profile limits.</string>
+    <string name="plan_dose_invalid">Choose 1–20 sets and 1–200 repetitions.</string>
+    <string name="plan_library_load_failed">Unable to load plans. Try again.</string>
+    <string name="feedback_forearm">Forearm</string>
+    <string name="feedback_back_of_the_hand">Back of the hand</string>
+    <string name="feedback_upper_arm_above_the_elbow">Upper arm, above the elbow</string>
+    <string name="feedback_forearm_below_the_elbow">Forearm, below the elbow</string>
+    <string name="feedback_thigh_above_the_knee">Thigh, above the knee</string>
+    <string name="feedback_lower_leg_below_the_knee">Lower leg, below the knee</string>
+    <string name="feedback_segment_closest_to_the_torso">Segment closest to the torso</string>
+    <string name="feedback_segment_beyond_the_joint">Segment beyond the joint</string>
+    <string name="feedback_support_your_forearm_palm_down_with_the_hand_free_beyond_the_edge">Support your forearm, palm down, with the hand free beyond the edge. Align your hand with your forearm and calibrate without bending your wrist.</string>
+    <string name="feedback_support_your_upper_arm_beside_your_body_and_start_with_your_elbow">Support your upper arm beside your body and start with your elbow comfortably bent. Calibrate before extending.</string>
+    <string name="feedback_keep_your_upper_arm_beside_your_body_and_your_forearm_in_the_comf">Keep your upper arm beside your body and your forearm in the comfortable lowered position prescribed by your physiotherapist. Calibrate before bending your elbow.</string>
+    <string name="feedback_sit_on_a_stable_chair_with_your_thigh_supported_and_knee_comforta">Sit on a stable chair with your thigh supported and knee comfortably bent. Calibrate before extending your leg.</string>
+    <string name="feedback_lie_on_your_back_with_your_leg_comfortably_extended_calibrate_bef">Lie on your back with your leg comfortably extended. Calibrate before sliding your heel to bend your knee.</string>
+    <string name="feedback_stand_with_stable_support_and_your_leg_comfortably_straight_calib">Stand with stable support and your leg comfortably straight. Calibrate before bending your knee.</string>
+    <string name="feedback_hold_your_position">Hold your position.</string>
+    <string name="feedback_position_lost_return_to_the_start_and_repeat">Position lost. Return to the start and repeat.</string>
+    <string name="feedback_hold_complete_return_to_the_starting_position">Hold complete. Return to the starting position.</string>
+    <string name="feedback_move_slowly_towards_the_target_angle">Move slowly towards the target angle</string>
+    <string name="feedback_set_complete">Set complete</string>
+    <string name="feedback_limit_exceeded_return_to_the_starting_position">Limit exceeded. Return to the starting position.</string>
+    <string name="feedback_return_to_the_starting_position">Return to the starting position.</string>
+    <string name="feedback_repetition_counted_prepare_for_the_next_movement">Repetition counted. Prepare for the next movement.</string>
+    <string name="feedback_begin_in_the_starting_position_and_move_slowly">Begin in the starting position and move slowly</string>
+    <string name="feedback_movement_outside_the_configured_limits_return_to_the_starting_pos">Movement outside the configured limits. Return to the starting position.</string>
+    <string name="feedback_adopt_the_starting_position">Adopt the starting position.</string>
+    <string name="feedback_hold_your_position_for_the_specified_duration">Hold your position for the specified duration.</string>
+    <string name="feedback_incomplete_movement_begin_again_from_the_starting_position">Incomplete movement. Begin again from the starting position.</string>
+    <string name="feedback_keep_your_torso_upright">Keep your torso upright.</string>
+    <string name="feedback_place_your_hands_behind_your_head">Place your hands behind your head.</string>
+    <string name="feedback_place_your_feet_shoulder_width_apart">Place your feet shoulder-width apart.</string>
+    <string name="feedback_get_into_the_push_up_position">Get into the push-up position.</string>
+    <string name="feedback_keep_your_hands_in_front_of_your_body">Keep your hands in front of your body.</string>
+    <string name="feedback_place_your_elbows_slightly_above_your_shoulders">Place your elbows slightly above your shoulders.</string>
+    <string name="feedback_keep_your_hands_above_your_shoulders">Keep your hands above your shoulders.</string>
+    <string name="feedback_body_not_detected_adjust_your_position_relative_to_the_camera">Body not detected. Adjust your position relative to the camera.</string>
+    <string name="feedback_keep_your_arms_straight">Keep your arms straight.</string>
+    <string name="feedback_raise_your_arms_above_your_shoulders">Raise your arms above your shoulders.</string>
+    <string name="feedback_position_ready_control_each_repetition">Position ready. Control each repetition.</string>
+    <string name="feedback_camera_detection_is_not_yet_available_for_this_exercise">Camera detection is not yet available for this exercise.</string>
+    <string name="feedback_one_strap_on_each_side_of_the_joint">One strap on each side of the joint</string>
+    <string name="feedback_1_main_module">1 · Main module</string>
+    <string name="feedback_2_smaller_module">2 · Smaller module</string>
+    <string name="feedback_less_information">Less information</string>
+    <string name="feedback_view_placement_instructions">View placement instructions</string>
+    <string name="feedback_faces_outward_modules_aligned_and_cable_slack_keep_the_joint_unob">Faces outward, modules aligned and cable slack. Keep the joint unobstructed.</string>
+    <string name="feedback_the_illustration_shows_placement_not_the_calibration_posture">The illustration shows placement, not the calibration posture.</string>
+    <string name="feedback_ttp223_touch_for_1_5_s_and_release_to_recalibrate_or_for_4_s_and">TTP223: touch for 1.5 s and release to recalibrate, or for 4 s and release to restart. After restarting, reconnect in the app and calibrate.</string>
+    <string name="feedback_sensor_connection_lost_check_the_connection_before_continuing">Sensor connection lost. Check the connection before continuing.</string>
+    <string name="feedback_unable_to_complete_the_operation_check_the_message_on_screen">Unable to complete the operation. Check the message on screen.</string>
+    <string name="feedback_exercise_complete_all_sets_have_been_saved">Exercise complete. All sets have been saved.</string>
+    <string name="feedback_set_complete_save_the_result_to_continue">Set complete. Save the result to continue.</string>
+    <string name="feedback_calibration_keep_the_sensors_still_in_the_neutral_position">Calibration. Keep the sensors still in the neutral position.</string>
+    <string name="feedback_calibration_complete_you_can_start_the_set">Calibration complete. You can start the set.</string>
+    <string name="feedback_sensors_connected_calibrate_before_starting">Sensors connected. Calibrate before starting.</string>
+    <string name="feedback_allow_camera_access">Allow camera access</string>
+    <string name="feedback_the_camera_detects_movement_and_records_your_set_microphone_acces">The camera detects movement and records your set. Microphone access is not required.</string>
+    <string name="feedback_allow">Allow</string>
+    <string name="feedback_open_settings">Open settings</string>
+    <string name="feedback_not_now">Not now</string>
+    <string name="feedback_stop_this_set">Stop this set?</string>
+    <string name="feedback_this_set_is_not_complete_and_will_need_to_be_repeated">This set is not complete and will need to be repeated.</string>
+    <string name="feedback_exit">Exit</string>
+    <string name="feedback_continue">Continue</string>
+    <string name="feedback_unable_to_start_the_camera_try_again">Unable to start the camera. Try again.</string>
+    <string name="feedback_camera_permission_is_required_to_monitor_your_exercise_tap_try_ag">Camera permission is required to monitor your exercise. Tap Try again.</string>
+    <string name="feedback_voice_unavailable_enable_a_voice_for_the_app_language_in_text_to">Voice unavailable. Enable a voice for the app language in text-to-speech settings.</string>
+    <string name="feedback_begin">Begin.</string>
+    <string name="feedback_allow_camera_access_to_continue">Allow camera access to continue.</string>
+    <string name="feedback_this_camera_is_unavailable_switch_cameras">This camera is unavailable. Switch cameras.</string>
+    <string name="feedback_camera_permission_was_removed_allow_access_and_try_again">Camera permission was removed. Allow access and try again.</string>
+    <string name="feedback_unable_to_start_this_camera_close_other_apps_using_it_and_try_aga">Unable to start this camera. Close other apps using it and try again, or switch cameras.</string>
+    <string name="feedback_set_complete_save_the_video_to_continue">Set complete. Save the video to continue.</string>
+    <string name="feedback_set_stopped">Set stopped.</string>
+    <string name="feedback_unable_to_save_the_recording_check_free_storage_and_try_again">Unable to save the recording. Check free storage and try again.</string>
+    <string name="feedback_unable_to_start_recording">Unable to start recording.</string>
+    <string name="feedback_unable_to_load_the_sensor_profile">Unable to load the sensor profile.</string>
+    <string name="feedback_placement_updated_for_this_session_return_to_the_starting_positio">Placement updated for this session. Return to the starting position and calibrate.</string>
+    <string name="feedback_the_exercise_changed_calibrate_again_to_send_the_current_profile">The exercise changed. Calibrate again to send the current profile.</string>
+    <string name="feedback_the_sensor_did_not_confirm_the_start_reconnect_and_try_again">The sensor did not confirm the start. Reconnect and try again.</string>
+    <string name="feedback_unable_to_create_the_exercise_ble_profile">Unable to create the exercise BLE profile.</string>
+    <string name="feedback_keep_the_sensors_still_in_the_neutral_position">Keep the sensors still in the neutral position.</string>
+    <string name="feedback_calibration_is_taking_longer_than_expected_wait_for_sensor_confir">Calibration is taking longer than expected. Wait for sensor confirmation or try again.</string>
+    <string name="feedback_waiting_for_calibration_confirmation">Waiting for calibration confirmation.</string>
+    <string name="feedback_free_practice_complete_the_result_was_not_submitted">Free practice complete. The result was not submitted.</string>
+    <string name="feedback_set_saved_you_can_rest_before_the_next_set">Set saved. You can rest before the next set.</string>
+    <string name="feedback_submission_failed_the_result_is_saved_on_this_device_try_again">Submission failed. The result is saved on this device. Try again.</string>
+    <string name="feedback_the_sensor_counter_was_reset_start_a_new_set">The sensor counter was reset. Start a new set.</string>
+    <string name="feedback_set_in_progress">Set in progress.</string>
+    <string name="feedback_exercise_received_by_the_wearable_calibrating">Exercise received by the wearable. Calibrating…</string>
+    <string name="feedback_calibrate_the_sensors_in_the_starting_position_before_beginning">Calibrate the sensors in the starting position before beginning.</string>
+    <string name="feedback_the_sensors_moved_during_calibration_keep_them_still_and_calibrat">The sensors moved during calibration. Keep them still and calibrate again.</string>
+    <string name="feedback_check_both_sensors_and_their_cables_then_calibrate_again">Check both sensors and their cables, then calibrate again.</string>
+    <string name="feedback_check_sensor_placement_the_selected_axis_must_follow_movement_in">Check sensor placement: the selected axis must follow movement in a vertical plane. Adjust the axis and calibrate again.</string>
+    <string name="feedback_load_the_exercise_and_calibrate_through_the_app_before_using_the">Load the exercise and calibrate through the app before using the button.</string>
+    <string name="feedback_the_sensor_is_not_ready_check_the_connection_and_calibrate_again">The sensor is not ready. Check the connection and calibrate again.</string>
+    <string name="feedback_set_stopped_by_the_sensor">Set stopped by the sensor.</string>
+    <string name="feedback_the_sensor_rejected_the_command_check_the_profile_and_calibrate_a">The sensor rejected the command. Check the profile and calibrate again.</string>
+    <string name="message_bluetooth_is_disabled">Bluetooth is disabled</string>
+    <string name="message_bluetooth_unavailable">Bluetooth unavailable</string>
+    <string name="message_unable_to_scan_for_sensors">Unable to scan for sensors</string>
+    <string name="message_sensor_not_found_check_that_it_is_powered_on_and_advertising">Sensor not found. Check that it is powered on and advertising.</string>
+    <string name="message_unable_to_prepare_the_sensor_connection_reconnect_and_try_ag">Unable to prepare the sensor connection. Reconnect and try again.</string>
+    <string name="message_the_connection_does_not_support_the_required_message_size_up">The connection does not support the required message size. Update the firmware and reconnect.</string>
+    <string name="message_unable_to_discover_sensor_services">Unable to discover sensor services.</string>
+    <string name="message_the_expected_sensor_service_is_unavailable">The expected sensor service is unavailable.</string>
+    <string name="message_unable_to_connect_to_the_sensor">Unable to connect to the sensor.</string>
+    <string name="message_connect_the_sensor_to_continue">Connect the sensor to continue.</string>
+    <string name="message_the_sensor_communication_channel_is_unavailable">The sensor communication channel is unavailable.</string>
+    <string name="message_unable_to_read_sensor_data">Unable to read sensor data.</string>
+    <string name="message_the_wearable_connection_is_not_ready_yet">The wearable connection is not ready yet.</string>
+    <string name="message_the_command_exceeds_the_allowed_size_update_the_firmware_and">The command exceeds the allowed size. Update the firmware and reconnect.</string>
+    <string name="message_wait_for_confirmation_of_the_previous_command">Wait for confirmation of the previous command.</string>
+    <string name="message_unable_to_send_the_command_to_the_wearable_reconnect">Unable to send the command to the wearable. Reconnect.</string>
+    <string name="message_the_wearable_did_not_acknowledge_the_message_reconnect">The wearable did not acknowledge the message. Reconnect.</string>
+    <string name="message_the_sensor_does_not_support_notifications">The sensor does not support notifications.</string>
+    <string name="message_unable_to_enable_sensor_notifications">Unable to enable sensor notifications.</string>
+    <string name="message_the_sensor_notification_configuration_is_missing">The sensor notification configuration is missing.</string>
+    <string name="message_unable_to_subscribe_to_sensor_notifications">Unable to subscribe to sensor notifications.</string>
+    <string name="message_this_device_does_not_support_ble">This device does not support BLE</string>
+    <string name="message_bluetooth_permission_is_required">Bluetooth permission is required</string>
+    <string name="message_select_a_device">Select a device</string>
+    <string name="message_camera_monitoring_is_not_available_for_this_exercise_choose">Camera monitoring is not available for this exercise. Choose sensors.</string>
+    <string name="message_your_physiotherapist_needs_to_review_this_exercise_profile">Your physiotherapist needs to review this exercise profile.</string>
+    <string name="message_unable_to_load_the_exercise_try_again">Unable to load the exercise. Try again.</string>
+    <string name="message_set_complete">Set complete.</string>
+    <string name="message_set_stopped_calibrate_to_begin_again">Set stopped. Calibrate to begin again.</string>
+    <string name="message_free_practice_complete">Free practice complete.</string>
+    <string name="message_sign_in_again_with_the_account_used_to_perform_this_exercise">Sign in again with the account used to perform this exercise.</string>
+    <string name="message_set_saved_rest_before_continuing">Set saved. Rest before continuing.</string>
+    <string name="message_unable_to_submit_the_video_is_saved_on_this_device_try_again">Unable to submit. The video is saved on this device. Try again.</string>
+    <string name="placement_main">%1$s · ESP32-C3 + sensor</string>
+    <string name="placement_secondary">%1$s · sensor only</string>
+    <string name="placement_description">Sensor placement: main ESP32-C3 module on %1$s and smaller module on %2$s. Two Velcro straps, one on each side of the joint, connected by a cable.</string>
+    <string name="free_practice_profile">Free practice: %1$s. One set of 10 repetitions. Results are not submitted.</string>
+    <string name="voice_repetition">Repetition %1$d.</string>
+    <string name="voice_start_set">Start set %1$d.</string>
+    <string name="ble_scan_failed">Unable to scan for sensors (code %1$d).</string>
+    <string name="ble_connection_error">Bluetooth connection error (code %1$d).</string>
+    <string name="ble_subscription_error">Notification subscription failed (code %1$d).</string>
+    <string name="ble_discovery_error">Unable to identify the sensor (code %1$d).</string>
+    <string name="ble_write_error">Unable to send the command (code %1$d). Reconnect.</string>
+    <string name="ble_read_error">Unable to read the sensor (code %1$d).</string>
+    <string name="label_rate_physiotherapist">Rate physiotherapist</string>
+    <string name="label_select_a_rating">Select a rating</string>
+    <string name="label_submit_rating">Submit rating</string>
+    <string name="label_no_exercises_are_assigned_for_this_day">No exercises are assigned for this day.</string>
+    <string name="label_no_exercises_to_display">No exercises to display.</string>
+    <string name="label_all">All</string>
+    <string name="label_wrist">Wrist</string>
+    <string name="label_elbow">Elbow</string>
+    <string name="label_knee">Knee</string>
+    <string name="label_add_plan">Add plan</string>
+    <string name="label_profile_picture">Profile picture</string>
+    <string name="label_default_profile_picture">Default profile picture</string>
+    <string name="label_physiotherapist">Physiotherapist</string>
+    <string name="label_view_details">View details</string>
+    <string name="label_search_physiotherapists">Search physiotherapists</string>
+    <string name="label_plan">Plan</string>
+    <string name="label_sign_in">Sign in</string>
+    <string name="label_previous_page">Previous page</string>
+    <string name="label_next_page">Next page</string>
+    <string name="label_exercise_information">Exercise information</string>
+    <string name="label_exercise_complete">Exercise complete</string>
+    <string name="label_open">Open</string>
+    <string name="label_github">GitHub</string>
+    <string name="label_email">Email</string>
+    <string name="plan_allowed_range">Allowed range: %1$.1f° to %2$.1f°.</string>
+    <string name="plan_profile_summary">Target %1$.1f° · Return %2$.1f° · %3$.1f s</string>
+    <string name="profile_picture_updated">Profile picture updated.</string>
+    <string name="sensor_axis_readings">Pitch: %1$s° · Roll: %2$s°</string>
+    <string name="camera_gallery_permission">Allow storage access to also save the video in your Gallery. The original is saved in the app.</string>
+    <string name="camera_gallery_saved">Video saved in Gallery · Movies/IPC</string>
+    <string name="camera_gallery_failed">Could not copy to Gallery. The original is saved in the app. Free some space and try again.</string>
+    <string name="camera_save_gallery">Save to Gallery</string>
+    <string name="camera_saved_pending">Set saved on this phone. Upload it later so your physiotherapist can see it.</string>
+    <string name="camera_preparing_upload">Preparing and sending video…</string>
+    <string name="camera_upload_too_large">The video still exceeds the upload limit. It remains saved on this phone. You can continue and retry sending it later.</string>
+    <string name="camera_upload_failed">Upload failed. The video is saved on this phone. Try again or save locally and continue.</string>
+    <string name="camera_pending_uploads">%1$d set(s) saved on this phone, waiting to be sent to your physiotherapist.</string>
+    <string name="camera_retry_uploads">Send pending sets</string>
+    <string name="camera_save_locally">Save on phone and continue</string>
+    <string name="camera_recording_complete">Recording complete · upload pending</string>
+    <string name="camera_local_save_failed">Could not save the pending result. Free some storage space and try again.</string>
 </resources>

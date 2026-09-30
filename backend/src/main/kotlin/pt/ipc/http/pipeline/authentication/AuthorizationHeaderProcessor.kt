@@ -38,7 +38,7 @@ class AuthorizationHeaderProcessor(
         return Pair(first = user, second = role)
     }
 
-    fun checkIfMonitorIsVerified(monitorID: UUID) = serviceUtils.checkIfMonitorIsVerified(monitorID = monitorID)
+    fun checkIfPhysiotherapistIsVerified(physiotherapistID: UUID) = serviceUtils.checkIfPhysiotherapistIsVerified(physiotherapistID = physiotherapistID)
 
     companion object {
         const val SCHEME = "bearer"

@@ -12,7 +12,7 @@ class JdbiUsersRepository(
 ) : UsersRepository {
 
     override fun getUserBySession(sessionID: String): UUID? =
-        handle.createQuery("select user_id  from dbo.session s where s.session = :sessionID")
+        handle.createQuery("select user_id from dbo.session s where s.session = :sessionID")
             .bind("sessionID", sessionID)
             .mapTo<UUID>()
             .singleOrNull()
@@ -29,7 +29,7 @@ class JdbiUsersRepository(
 
     override fun getUserByIDAndSession(id: UUID, sessionID: String): User? =
         handle.createQuery(
-            "select u.id,u.name,u.email,u.password_hash from dbo.users u " +
+            "select u.id,u.name,u.email,u.password_hash from dbo.\"user\" u " +
                 "inner join dbo.session s on s.user_id = u.id " +
                 "where s.user_id = :id and s.session = :sessionID"
         )
@@ -39,29 +39,29 @@ class JdbiUsersRepository(
             .singleOrNull()
 
     override fun getUsersIDs(): List<UUID> =
-        handle.createQuery("select id from dbo.users")
+        handle.createQuery("select id from dbo.\"user\"")
             .mapTo<UUID>()
             .toList()
 
     override fun login(email: String, passwordHash: String): UUID? =
-        handle.createQuery("select id from dbo.users where email = :email  and password_hash = :passwordHash")
+        handle.createQuery("select id from dbo.\"user\" where email = :email and password_hash = :passwordHash")
             .bind("email", email)
             .bind("passwordHash", passwordHash)
             .mapTo<UUID>()
             .singleOrNull()
 
     override fun getUserByID(userID: UUID): User? =
-        handle.createQuery("select id, name, email, password_hash from dbo.users where id = :userID")
+        handle.createQuery("select id, name, email, password_hash from dbo.\"user\" where id = :userID")
             .bind("userID", userID)
             .mapTo<User>()
             .singleOrNull()
 
     override fun getRoleByID(userID: UUID): Role =
-        handle.createQuery("select 'CLIENT' from dbo.clients where c_id = :userID")
+        handle.createQuery("select 'PATIENT' from dbo.patient where id = :userID")
             .bind("userID", userID)
             .mapTo<Role>()
             .singleOrNull()
-            ?: handle.createQuery("select 'MONITOR' from dbo.monitors where m_id = :userID")
+            ?: handle.createQuery("select 'PHYSIOTHERAPIST' from dbo.physiotherapist where id = :userID")
                 .bind("userID", userID)
                 .mapTo<Role>()
                 .singleOrNull() ?: Role.ADMIN

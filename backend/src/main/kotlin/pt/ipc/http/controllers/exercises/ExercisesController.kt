@@ -27,22 +27,22 @@ import java.util.UUID
 @RequestMapping(produces = ["application/json", "video/mp4", Problem.PROBLEM_MEDIA_TYPE])
 class ExercisesController(private val exercisesService: ExercisesService) {
 
-
     @GetMapping(Uris.EXERCISES)
-    @Cacheable("cacheExercises")
+    //@Cacheable("cacheExercises")
     fun getExercises(
-        @RequestParam(required = false) exerciseType: ExerciseType?,
+        @RequestParam(required = false) exerciseType: String?,
+        @RequestParam(required = false) joint: String?,
         @RequestParam(required = false, defaultValue = DEFAULT_SKIP) skip: Int,
         @RequestParam(required = false, defaultValue = DEFAULT_LIMIT) limit: Int
     ): ResponseEntity<ListOfExercisesInfo> {
-        val exercises = exercisesService.getExercises(exerciseType = exerciseType, skip = skip, limit = limit)
+        val exercises = exercisesService.getExercises(exerciseType = exerciseType, skip = skip, limit = limit, joint = joint)
         return ResponseEntity.ok(
             ListOfExercisesInfo(exercises = exercises)
         )
     }
 
     @GetMapping(Uris.EXERCISES_INFO)
-    @Cacheable("cacheExerciseInfo")
+    //@Cacheable("cacheExerciseInfo")
     fun getExerciseInfo(@PathVariable exerciseID: UUID): ResponseEntity<ExerciseInfo> {
         val exerciseInfo = exercisesService.getExercisesInfo(exerciseID = exerciseID)
         return ResponseEntity.ok(exerciseInfo)
@@ -60,19 +60,19 @@ class ExercisesController(private val exercisesService: ExercisesService) {
         return ResponseEntity.ok().headers(headers).body(exerciseVideo)
     }
 
-    // @Authentication TODO
-    @GetMapping(Uris.VIDEO_OF_EXERCISE)
-    fun getClientVideoOfExercise(
-        @PathVariable clientID: UUID,
+    @Authentication
+    @GetMapping(value = [Uris.VIDEO_OF_EXERCISE])
+    fun getPatientVideoOfExercise(
+        @PathVariable patientID: UUID,
         @PathVariable planID: Int,
         @PathVariable dailyListID: Int,
         @PathVariable exerciseID: Int,
-        @RequestParam(required = true) set: Int
-        // user: User
+        @RequestParam(required = true) set: Int,
+        user: User
     ): ResponseEntity<ByteArray> {
-        val clientVideo = exercisesService.getClientVideo(
-            clientID = clientID,
-            // userID = user.id,
+        val patientVideo = exercisesService.getPatientVideo(
+            patientID = patientID,
+            userID = user.id,
             planID = planID,
             dailyList = dailyListID,
             dailyExercise = exerciseID,
@@ -82,15 +82,15 @@ class ExercisesController(private val exercisesService: ExercisesService) {
         val headers = HttpHeaders()
 
         headers.contentType = MediaType.parseMediaType("video/mp4")
-        headers.contentLength = clientVideo.size.toLong()
+        headers.contentLength = patientVideo.size.toLong()
 
-        return ResponseEntity.ok().headers(headers).body(clientVideo)
+        return ResponseEntity.ok().headers(headers).body(patientVideo)
     }
 
     @Authentication
-    @GetMapping(Uris.EXERCISE_FEEDBACK)
+    @GetMapping(value = [Uris.EXERCISE_FEEDBACK])
     fun getVideoFeedBack(
-        @PathVariable clientID: UUID,
+        @PathVariable patientID: UUID,
         @PathVariable dailyListID: Int,
         @PathVariable exerciseID: Int,
         @PathVariable planID: Int,
@@ -98,7 +98,7 @@ class ExercisesController(private val exercisesService: ExercisesService) {
         user: User
     ): ResponseEntity<VideoFeedBack> {
         val videoFeedBack = exercisesService.getVideoFeedback(
-            clientID = clientID,
+            patientID = patientID,
             userID = user.id,
             planID = planID,
             dailyList = dailyListID,
@@ -110,16 +110,16 @@ class ExercisesController(private val exercisesService: ExercisesService) {
     }
 
     @Authentication
-    @GetMapping(Uris.PLAN_CURRENT)
-    fun getPlanOfClientContainingDate(
-        @PathVariable clientID: UUID,
+    @GetMapping(value = [Uris.PLAN_CURRENT])
+    fun getPlanOfPatientContainingDate(
+        @PathVariable patientID: UUID,
         @RequestParam(required = false)
         @DateTimeFormat(pattern = "yyyy-MM-dd")
         date: LocalDate?,
         user: User
     ): ResponseEntity<PlanOutput> {
         val planOutput: PlanOutput =
-            exercisesService.getPlanOfClientContainingDate(userID = user.id, clientID = clientID, date = date ?: LocalDate.now())
+            exercisesService.getPlanOfPatientContainingDate(userID = user.id, patientID = patientID, date = date ?: LocalDate.now())
 
         return ResponseEntity.ok(planOutput)
     }

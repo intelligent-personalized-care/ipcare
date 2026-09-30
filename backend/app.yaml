@@ -9,7 +9,7 @@ basic_scaling:
   idle_timeout: 10m
 service_account: organic-byway-391719@appspot.gserviceaccount.com
 env_variables:
-  jdbcURL: "jdbc:postgresql://google/ipc"
-  cloudSqlInstance: "organic-byway-391719:europe-southwest1:ipc"
-  postgresql_username: "ipc"
-  postgresql_password: "postgresql"
+  INSTANCE_CONNECTION_NAME: organic-byway-391719:europe-west1:postgres
+  DB_NAME: postgres
+  DB_USER: postgres
+  DB_PASS: Tigas2002.

@@ -1,18 +1,23 @@
-TRUNCATE TABLE dbo.USERS cascade;
-TRUNCATE TABLE dbo.MONITORS cascade;
-TRUNCATE TABLE dbo.CLIENTS cascade;
+TRUNCATE TABLE dbo."user" cascade;
+TRUNCATE TABLE dbo.physiotherapist cascade;
+TRUNCATE TABLE dbo.patient cascade;
 TRUNCATE TABLE dbo.SESSION cascade;
-TRUNCATE TABLE dbo.MONITOR_RATING cascade;
+TRUNCATE TABLE dbo.patient_to_physiotherapist cascade;
+TRUNCATE TABLE dbo.physiotherapist_requests cascade;
+TRUNCATE TABLE dbo.physiotherapist_rating cascade;
 TRUNCATE TABLE dbo.DOCS_AUTHENTICITY cascade;
-TRUNCATE TABLE dbo.PLANS cascade;
-TRUNCATE TABLE dbo.CLIENT_PLANS cascade;
-TRUNCATE TABLE dbo.DAILY_LISTS cascade;
-TRUNCATE TABLE dbo.EXERCISES_INFO cascade;
-TRUNCATE TABLE dbo.client_to_monitor cascade;
-TRUNCATE TABLE dbo.DAILY_EXERCISES cascade;
-TRUNCATE TABLE dbo.EXERCISES_VIDEO cascade;
-TRUNCATE TABLE dbo.monitor_requests cascade;
+TRUNCATE TABLE dbo.plan cascade;
+TRUNCATE TABLE dbo.patient_plan cascade;
+TRUNCATE TABLE dbo.daily_list cascade;
+TRUNCATE TABLE dbo.exercise_info cascade;
+TRUNCATE TABLE dbo.daily_exercise cascade;
+TRUNCATE TABLE dbo.plan_exercise_setting cascade;
+TRUNCATE TABLE dbo.exercise_session cascade;
+TRUNCATE TABLE dbo.exercise_session_file cascade;
+TRUNCATE TABLE dbo.admin cascade;
 
-ALTER SEQUENCE dbo.daily_exercises_id_seq RESTART WITH 1;
-ALTER SEQUENCE dbo.daily_lists_id_seq RESTART WITH 1;
-ALTER SEQUENCE dbo.plans_id_seq RESTART WITH 1
+ALTER SEQUENCE dbo.daily_exercise_id_seq RESTART WITH 1;
+ALTER SEQUENCE dbo.daily_list_id_seq RESTART WITH 1;
+ALTER SEQUENCE dbo.plan_id_seq RESTART WITH 1;
+ALTER SEQUENCE dbo.patient_plan_id_seq RESTART WITH 1;
+ALTER SEQUENCE dbo.plan_exercise_setting_id_seq RESTART WITH 1;

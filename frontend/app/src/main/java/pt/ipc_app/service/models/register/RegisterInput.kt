@@ -1,6 +1,6 @@
 package pt.ipc_app.service.models.register
 
-data class RegisterClientInput(
+data class RegisterPatientInput(
     val name: String,
     val email: String,
     val password: String,
@@ -10,7 +10,7 @@ data class RegisterClientInput(
     val physicalCondition : String?
 )
 
-data class RegisterMonitorInput(
+data class RegisterPhysiotherapistInput(
     val name: String,
     val email: String,
     val password: String

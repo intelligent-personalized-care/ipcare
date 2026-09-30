@@ -16,22 +16,24 @@ class JdbiExercisesRepository(
 ) : ExerciseRepository {
 
     override fun getExercise(exerciseID: UUID): ExerciseInfo? {
-        return handle.createQuery("select * from dbo.exercises_info where id = :exerciseID")
+        return handle.createQuery("select *, exercise_type as type from dbo.exercise_info where id = :exerciseID")
             .bind("exerciseID", exerciseID)
             .mapTo<ExerciseInfo>()
             .singleOrNull()
     }
 
-    override fun getExercises(skip: Int, limit: Int): List<ExerciseInfo> {
-        return handle.createQuery("select * from dbo.exercises_info offset :skip limit :limit")
+    override fun getExercises(skip: Int, limit: Int, joint: String?): List<ExerciseInfo> {
+        return handle.createQuery("select *, exercise_type as type from dbo.exercise_info where (cast(:joint as varchar) is null or camera_joint = :joint) order by title, id offset :skip limit :limit")
+            .bind("joint", joint)
             .bind("skip", skip)
             .bind("limit", limit)
             .mapTo<ExerciseInfo>()
             .toList()
     }
 
-    override fun getExerciseByType(type: ExerciseType, skip: Int, limit: Int): List<ExerciseInfo> {
-        return handle.createQuery("select * from dbo.exercises_info where type = :type offset :skip limit :limit")
+    override fun getExerciseByType(type: ExerciseType, skip: Int, limit: Int, joint: String?): List<ExerciseInfo> {
+        return handle.createQuery("select *, exercise_type as type from dbo.exercise_info where exercise_type = :type and (cast(:joint as varchar) is null or camera_joint = :joint) order by title, id offset :skip limit :limit")
+            .bind("joint", joint)
             .bind("type", type)
             .bind("skip", skip)
             .bind("limit", limit)
@@ -39,41 +41,42 @@ class JdbiExercisesRepository(
             .toList()
     }
 
-    override fun getAllExercisesOfClient(clientID: UUID, skip: Int, limit: Int): List<Exercise> {
+    override fun getAllExercisesOfPatient(patientID: UUID, skip: Int, limit: Int): List<Exercise> {
         val sql = """
-        SELECT de.ex_id, de.sets, de.reps
-        FROM dbo.daily_exercises de
-        JOIN dbo.daily_lists dl ON de.daily_list_id = dl.id
-        JOIN dbo.plans p ON dl.plan_id = p.id
-        JOIN dbo.client_plans cp ON p.id = cp.plan_id
-        WHERE cp.client_id = :clientID
-        offset :skip 
+        SELECT de.exercise_id as ex_id, de.sets, de.reps
+        FROM dbo.daily_exercise de
+        JOIN dbo.daily_list dl ON de.daily_list_id = dl.id
+        JOIN dbo.plan p ON dl.plan_id = p.id
+        JOIN dbo.patient_plan pp ON p.id = pp.plan_id
+        WHERE pp.patient_id = :patientID
+        offset :skip
         limit :limit
     """
         return handle.createQuery(sql)
-            .bind("clientID", clientID)
+            .bind("patientID", patientID)
             .bind("skip", skip)
             .bind("limit", limit)
             .mapTo<Exercise>()
             .list()
     }
 
-    override fun getExercisesOfDay(clientID: UUID, date: LocalDate): List<Exercise> {
+    override fun getExercisesOfDay(patientID: UUID, date: LocalDate): List<Exercise> {
         val sql = """
-        SELECT de.ex_id, de.sets, de.reps 
-        FROM dbo.daily_exercises de
-        JOIN dbo.daily_lists dl ON de.daily_list_id = dl.id
-        JOIN dbo.plans p ON dl.plan_id = p.id
-        JOIN dbo.client_plans cp ON p.id = cp.plan_id
-        WHERE cp.client_id = :clientID
-        AND dl.index = :dayIndex
+        SELECT de.exercise_id as ex_id, de.sets, de.reps
+        FROM dbo.daily_exercise de
+        JOIN dbo.daily_list dl ON de.daily_list_id = dl.id
+        JOIN dbo.plan p ON dl.plan_id = p.id
+        JOIN dbo.patient_plan pp ON p.id = pp.plan_id
+        WHERE pp.patient_id = :patientID
+        AND dl.day_index = :dayIndex
+        AND :date BETWEEN pp.dt_start AND pp.dt_end
     """
 
         val dtStart = handle.createQuery(
             "SELECT dt_start FROM " +
-                "dbo.client_plans cp WHERE cp.client_id = :clientID and :date between cp.dt_start and cp.dt_end"
+                "dbo.patient_plan cp WHERE cp.patient_id = :patientID and :date between cp.dt_start and cp.dt_end"
         )
-            .bind("clientID", clientID)
+            .bind("patientID", patientID)
             .bind("date", date)
             .mapTo<LocalDate>()
             .singleOrNull() ?: return emptyList()
@@ -81,14 +84,15 @@ class JdbiExercisesRepository(
         val dayIndex = Duration.between(dtStart.atStartOfDay(), date.atStartOfDay()).toDays().toInt()
 
         return handle.createQuery(sql)
-            .bind("clientID", clientID)
+            .bind("patientID", patientID)
             .bind("dayIndex", dayIndex)
+            .bind("date", date)
             .mapTo<Exercise>()
             .list()
     }
 
     override fun addExerciseInfoPreview(exerciseID: UUID, title: String, description: String, type: ExerciseType) {
-        handle.createUpdate("insert into dbo.exercises_info(id, title, description, type) values(:id,:title,:description,:type)")
+        handle.createUpdate("insert into dbo.exercise_info(id, title, description, exercise_type) values(:id,:title,:description,:type)")
             .bind("id", exerciseID)
             .bind("title", title)
             .bind("description", description)
@@ -96,33 +100,37 @@ class JdbiExercisesRepository(
             .execute()
     }
 
-    override fun getClientVideoID(clientID: UUID, planID: Int, dailyListID: Int, dailyExerciseID: Int, set: Int): UUID? =
+    override fun getPatientVideoID(patientID: UUID, planID: Int, dailyListID: Int, dailyExerciseID: Int, set: Int): UUID? =
         handle.createQuery(
-            "select ev.id from dbo.exercises_video ev " +
-                "inner join dbo.daily_exercises de on de.id = ev.ex_id " +
-                "inner join dbo.daily_lists dl on de.daily_list_id = dl.id " +
-                "where de.id = :dailyExerciseID and dl.id = :dailyListID and dl.plan_id = :planID and ev.client_id = :clientID and ev.nr_set = :set"
+            "select es.id from dbo.exercise_session es " +
+                "inner join dbo.daily_exercise de on de.id = es.daily_exercise_id " +
+                "inner join dbo.daily_list dl on de.daily_list_id = dl.id " +
+                "inner join dbo.plan p on p.id = dl.plan_id " +
+                "inner join dbo.patient_plan pp on pp.plan_id = p.id " +
+                "where de.id = :dailyExerciseID and dl.id = :dailyListID and dl.plan_id = :planID and pp.patient_id = :patientID and es.patient_id = :patientID and es.nr_set = :set"
         )
             .bind("dailyExerciseID", dailyExerciseID)
             .bind("dailyListID", dailyListID)
             .bind("planID", planID)
-            .bind("clientID", clientID)
+            .bind("patientID", patientID)
             .bind("set", set)
             .mapTo<UUID>()
             .singleOrNull()
 
     override fun getVideoFeedback(videoID: UUID): VideoFeedBack =
-        handle.createQuery("select feedback_client,feedback_monitor from dbo.exercises_video where id = :videoID")
+        handle.createQuery(
+            "select patient_feedback, physiotherapist_feedback, with_load as withLoad, load_value as loadValue, load_unit as loadUnit, execution_mode as executionMode, execution_score as executionScore, physiotherapist_feedback_score as physiotherapistFeedbackScore from dbo.exercise_session where id = :videoID"
+        )
             .bind("videoID", videoID)
             .mapTo<VideoFeedBack>()
             .single()
 
     override fun deletePreview(videoID: UUID) {
-        handle.createUpdate("delete from dbo.exercises_info where id = :videoID")
+        handle.createUpdate("delete from dbo.exercise_info where id = :videoID")
             .bind("videoID", videoID)
             .execute()
     }
 
     override fun getPreviewsIDs(): List<UUID> =
-        handle.createQuery("select id from dbo.exercises_info").mapTo<UUID>().toList()
+        handle.createQuery("select id from dbo.exercise_info").mapTo<UUID>().toList()
 }

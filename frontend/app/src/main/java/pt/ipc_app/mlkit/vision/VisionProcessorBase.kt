@@ -22,7 +22,6 @@ import android.graphics.Bitmap
 import android.os.Build.VERSION_CODES
 import android.os.SystemClock
 import android.util.Log
-import android.widget.Toast
 import androidx.annotation.GuardedBy
 import androidx.annotation.RequiresApi
 import androidx.camera.core.ExperimentalGetImage
@@ -175,7 +174,8 @@ abstract class VisionProcessorBase<T>(context: Context) : VisionImageProcessor {
   @ExperimentalGetImage
   override fun processImageProxy(image: ImageProxy, graphicOverlay: GraphicOverlay) {
     val frameStartMs = SystemClock.elapsedRealtime()
-    if (isShutdown) {
+    if (isShutdown || image.image == null) {
+      image.close()
       return
     }
     var bitmap: Bitmap? = null
@@ -313,15 +313,6 @@ abstract class VisionProcessorBase<T>(context: Context) : VisionImageProcessor {
           graphicOverlay.clear()
           graphicOverlay.postInvalidate()
           val error = "Failed to process. Error: " + e.localizedMessage
-          Toast.makeText(
-              graphicOverlay.context,
-              """
-          $error
-          Cause: ${e.cause}
-          """.trimIndent(),
-              Toast.LENGTH_SHORT
-            )
-            .show()
           Log.d(TAG, error)
           e.printStackTrace()
           this@VisionProcessorBase.onFailure(e)

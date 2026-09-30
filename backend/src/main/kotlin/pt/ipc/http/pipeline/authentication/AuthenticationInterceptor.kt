@@ -7,8 +7,8 @@ import pt.ipc.domain.User
 import pt.ipc.domain.exceptions.ForbiddenRequest
 import pt.ipc.domain.exceptions.Unauthenticated
 import pt.ipc.http.controllers.admin.AdminController
-import pt.ipc.http.controllers.clients.ClientsController
-import pt.ipc.http.controllers.monitors.MonitorsController
+import pt.ipc.http.controllers.patients.PatientsController
+import pt.ipc.http.controllers.physiotherapists.PhysiotherapistsController
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -18,10 +18,10 @@ class AuthenticationInterceptor(
 ) : HandlerInterceptor {
 
     private val uuidRegex = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
-    private val monitorCredentialRegex = "/users/monitors/$uuidRegex/credential".toRegex()
-    private val monitorProfileRegex = "/users/monitors/$uuidRegex/profile".toRegex()
+    private val physiotherapistCredentialRegex = "/users/physiotherapists/$uuidRegex/credential".toRegex()
+    private val physiotherapistProfileRegex = "/users/physiotherapists/$uuidRegex/profile".toRegex()
     private val subscribeURI = "/users/subscribe".toRegex()
-    private val unsubscribeURI = "/users/subscribe".toRegex()
+    private val unsubscribeURI = "/users/unsubscribe".toRegex()
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         if (handler is HandlerMethod && handler.hasMethodAnnotation(Authentication::class.java)) {
@@ -32,20 +32,20 @@ class AuthenticationInterceptor(
             val uri = request.requestURI
 
             if (
-                role.isMonitor() &&
+                role.isPhysiotherapist() &&
                 (
-                    !(uri.matches(monitorCredentialRegex) && request.method == "POST") && // Inputting Credential
-                        !(uri.matches(monitorProfileRegex) && request.method == "GET") &&
+                    !(uri.matches(physiotherapistCredentialRegex) && request.method == "POST") && // Inputting Credential
+                        !(uri.matches(physiotherapistProfileRegex) && request.method == "GET") &&
                         !(uri.matches(subscribeURI) && request.method == "GET") &&
                         !(uri.matches(unsubscribeURI) && request.method == "POST")
                     )
             ) {
-                authorizationHeaderProcessor.checkIfMonitorIsVerified(monitorID = user.id)
+                authorizationHeaderProcessor.checkIfPhysiotherapistIsVerified(physiotherapistID = user.id)
             }
 
             if (
-                handler.method.declaringClass == ClientsController::class.java && role.notClient() ||
-                handler.method.declaringClass == MonitorsController::class.java && role.notMonitor() ||
+                handler.method.declaringClass == PatientsController::class.java && role.notPatient() ||
+                handler.method.declaringClass == PhysiotherapistsController::class.java && role.notPhysiotherapist() ||
                 handler.method.declaringClass == AdminController::class.java && role.notAdmin()
             ) {
                 throw ForbiddenRequest

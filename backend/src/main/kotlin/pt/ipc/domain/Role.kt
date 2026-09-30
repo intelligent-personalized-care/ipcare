@@ -1,26 +1,25 @@
 package pt.ipc.domain
 
 enum class Role {
-    CLIENT,
-    MONITOR,
+    PATIENT,
+    PHYSIOTHERAPIST,
     ADMIN;
 
-    fun isMonitor(): Boolean = this == MONITOR
+    fun isPhysiotherapist(): Boolean = this == PHYSIOTHERAPIST
 
+    fun isPatient(): Boolean = this == PATIENT
 
     fun notAdmin(): Boolean = this != ADMIN
 
+    fun notPatient(): Boolean = !isPatient()
 
-    fun notClient(): Boolean = this != CLIENT
-
-
-    fun notMonitor(): Boolean = this != MONITOR
-
+    fun notPhysiotherapist(): Boolean = !isPhysiotherapist()
 }
 
 fun Any?.toRole(): Role =
     when (this) {
-        "CLIENT" -> Role.CLIENT
-        "MONITOR" -> Role.MONITOR
-        else -> Role.ADMIN
+        "PATIENT" -> Role.PATIENT
+        "PHYSIOTHERAPIST" -> Role.PHYSIOTHERAPIST
+        "ADMIN" -> Role.ADMIN
+        else -> throw pt.ipc.domain.exceptions.Unauthenticated
     }

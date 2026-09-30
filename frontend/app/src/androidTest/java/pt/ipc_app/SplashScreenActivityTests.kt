@@ -10,8 +10,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import pt.ipc_app.domain.user.Role
-import pt.ipc_app.ui.screens.home.ClientHomeScreenTag
-import pt.ipc_app.ui.screens.home.MonitorHomeScreenTag
+import pt.ipc_app.ui.screens.home.PatientHomeScreenTag
+import pt.ipc_app.ui.screens.home.PhysiotherapistHomeScreenTag
 import pt.ipc_app.ui.screens.role.ChooseRoleScreenTag
 import pt.ipc_app.ui.screens.splash.SplashScreenActivity
 import java.util.*
@@ -49,22 +49,22 @@ class SplashScreenActivityTests {
     }
 
     @Test
-    fun initialize_app_navigates_to_client_home_if_user_info_exists_and_is_client() {
+    fun initialize_app_navigates_to_patient_home_if_user_info_exists_and_is_patient() {
 
-        app.sessionManager.setSession(UUID.randomUUID().toString(), "", "", "", Role.CLIENT)
+        app.sessionManager.setSession(UUID.randomUUID().toString(), "", "", "", Role.PATIENT)
 
         testRule.waitForIdle()
 
-        testRule.onNodeWithTag(ClientHomeScreenTag).assertExists()
+        testRule.onNodeWithTag(PatientHomeScreenTag).assertExists()
     }
 
     @Test
-    fun initialize_app_navigates_to_monitor_home_if_user_info_exists_and_is_monitor() {
+    fun initialize_app_navigates_to_physiotherapist_home_if_user_info_exists_and_is_physiotherapist() {
 
-        app.sessionManager.setSession(UUID.randomUUID().toString(), "", "", "", Role.MONITOR)
+        app.sessionManager.setSession(UUID.randomUUID().toString(), "", "", "", Role.PHYSIOTHERAPIST)
 
         testRule.waitForIdle()
 
-        testRule.onNodeWithTag(MonitorHomeScreenTag).assertExists()
+        testRule.onNodeWithTag(PhysiotherapistHomeScreenTag).assertExists()
     }
 }

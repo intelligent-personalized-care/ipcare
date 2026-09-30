@@ -38,9 +38,9 @@ class IPCApplication : DependenciesContainer, Application() {
 
     override val okHttp: OkHttpClient by lazy {
         OkHttpClient.Builder()
-            .connectTimeout(0, TimeUnit.MINUTES)
-            .writeTimeout(0, TimeUnit.MINUTES)
-            .readTimeout(0, TimeUnit.MINUTES)
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(5, TimeUnit.MINUTES)
+            .readTimeout(90, TimeUnit.SECONDS)
             .build()
     }
 
@@ -105,7 +105,7 @@ class IPCApplication : DependenciesContainer, Application() {
     }
 
     companion object {
-        private const val API_ENDPOINT = "https://organic-byway-391719.ew.r.appspot.com"
+        private const val API_ENDPOINT = BuildConfig.API_ENDPOINT
 
         const val SSE_NOTIFICATIONS_CHANNEL = "sse_notifications_channel"
         private const val SSE_NOTIFICATIONS = "Notifications"

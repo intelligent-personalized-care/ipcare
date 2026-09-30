@@ -1,12 +1,18 @@
 package pt.ipc_app.ui.screens.plan
 
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import pt.ipc_app.ui.theme.*
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import pt.ipc_app.ui.components.ScreenHeader
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,68 +29,34 @@ import java.time.LocalDate
 @Composable
 fun PlanScreen(
     plan: Plan?,
-    clientName: String,
+    patientName: String,
     onExerciseSelect: (ExerciseTotalInfo) -> Unit = { }
 ) {
-    var daySelected: LocalDate by remember { mutableStateOf(LocalDate.now()) }
-    var dailyListSelected: DailyList? by remember { mutableStateOf(null) }
-
-    dailyListSelected = plan?.getListOfDayIfExists(daySelected)
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(top = 30.dp)
-    ) {
-        Text(
-            text = stringResource(R.string.plan_screen_title),
-            style = MaterialTheme.typography.h4,
-            modifier = Modifier.padding(bottom = 40.dp)
-        )
-
-        plan?.let {
-            Text(
-                text = plan.title,
-                style = MaterialTheme.typography.h5,
-            )
-            Text(text = "of")
-            Text(
-                text = clientName,
-                style = MaterialTheme.typography.h6,
-                modifier = Modifier.padding(bottom = 20.dp)
-            )
-
-            Text(text = "${plan.startDate} - ${plan.startDate.toLocalDate().plusDays(plan.dailyLists.size.toLong() - 1)}")
-
-            DaysWithLocalDateRow(
-                days = plan.days(),
-                daySelected = daySelected,
-                onDaySelected = {
-                    daySelected = it
-                    dailyListSelected = plan.getListOfDayIfExists(it)
-                },
-                modifier = Modifier.padding(end = 8.dp)
-            )
-
-            DailyExercisesList(
-                dailyListSelected = dailyListSelected,
-                onExerciseSelect = { ex ->
-                    onExerciseSelect(
-                        ExerciseTotalInfo(
-                            planId = plan.id,
-                            dailyListId = dailyListSelected!!.id,
-                            exercise = ex
-                        )
-                    )
+    val days = remember(plan) { plan?.days().orEmpty() }
+    var daySelected by remember(plan?.id) { mutableStateOf(LocalDate.now().takeIf { it in days } ?: days.firstOrNull() ?: LocalDate.now()) }
+    val selected = plan?.getListOfDayIfExists(daySelected)
+    Column(Modifier.fillMaxSize()) {
+        ScreenHeader(plan?.title ?: stringResource(R.string.plan_screen_title), subtitle = patientName.takeIf { it.isNotBlank() }?.let { "Plano de $it" })
+        if (plan == null) {
+            LinearProgressIndicator(Modifier.fillMaxWidth().padding(20.dp))
+        } else {
+            Column(Modifier.padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                val formatter = java.time.format.DateTimeFormatter.ofLocalizedDate(java.time.format.FormatStyle.MEDIUM)
+                if (days.isNotEmpty()) Text("${days.first().format(formatter)} - ${days.last().format(formatter)}", style = MaterialTheme.typography.caption, color = MediumGrey)
+                DaysWithLocalDateRow(days, daySelected, { daySelected = it })
+                Text(pluralStringResource(R.plurals.exercise_count, selected?.exercises?.size ?: 0, selected?.exercises?.size ?: 0), style = MaterialTheme.typography.h6)
+            }
+            Box(Modifier.weight(1f).fillMaxWidth()) {
+                DailyExercisesList(selected) { exercise ->
+                    selected?.let { onExerciseSelect(ExerciseTotalInfo(plan.id, it.id, exercise)) }
                 }
-            )
+            }
         }
-
     }
-
 }
 
 @Preview
 @Composable
 fun PlanScreenPreview() {
-    PlanScreen(plan = planTest, clientName = "Test")
+    PlanScreen(plan = planTest, patientName = "Test")
 }

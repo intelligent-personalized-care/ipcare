@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.CancellationException
+import java.io.IOException
 import pt.ipc_app.domain.APIException
 import pt.ipc_app.service.connection.APIResult
 import pt.ipc_app.service.utils.NoInternetConnection
@@ -29,6 +31,8 @@ open class AppViewModel : ViewModel() {
     val error
         get() = _error.asStateFlow()
 
+    fun dismissError() { _error.value = null }
+
     fun changeButtonBar(buttonBarType: ButtonBarType) {
         if (buttonBarClicked.value != buttonBarType)
             _buttonBarClicked.value = buttonBarType
@@ -43,12 +47,14 @@ open class AppViewModel : ViewModel() {
             try {
                 onSuccess(executeRequest(request))
             } catch (e: Exception) {
+                if (e is CancellationException) throw e
                 if (e is APIException) {
                     _error.value = e.error
                     Log.println(Log.WARN, "ERROR", e.error.title)
                 }
-                if (e is UnknownHostException)
+                else if (e is IOException)
                     _error.value = NoInternetConnection()
+                else _error.value = ResponseError(title = "Request failed", message = e.message ?: "Please try again.")
             }
         }
     }

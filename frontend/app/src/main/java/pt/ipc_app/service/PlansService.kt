@@ -8,7 +8,7 @@ import pt.ipc_app.service.models.EmptyResponseBody
 import pt.ipc_app.service.models.plans.CreatePlanOutput
 import pt.ipc_app.service.models.plans.ListOfPlans
 import pt.ipc_app.service.models.plans.PlanInput
-import pt.ipc_app.service.models.plans.PlanToClient
+import pt.ipc_app.service.models.plans.PlanToPatient
 import java.io.IOException
 import java.time.LocalDate
 import java.util.UUID
@@ -35,65 +35,68 @@ class PlansService(
      */
     suspend fun createPlan(
         plan: PlanInput,
-        monitorId: UUID,
+        physiotherapistId: UUID,
         token: String
     ): APIResult<CreatePlanOutput> =
         post(
-            uri = "/users/monitors/$monitorId/plans",
+            uri = "/users/physiotherapists/$physiotherapistId/plans",
             token = token,
             body = plan
         )
 
     /**
-     * Gets a plan of client.
+     * Gets a plan of patient.
      *
      * @return the API result of the request
      *
      * @throws IOException if there is an error while sending the request
      */
-    suspend fun getPlanOfClient(
-        clientId: UUID,
+    suspend fun getPlanOfPatient(
+        patientId: UUID,
         date: String,
         token: String
     ): APIResult<Plan> =
         get(
-            uri = "/users/clients/$clientId/plans?date=$date",
+            uri = "/users/patients/$patientId/plans?date=$date",
             token = token
         )
 
     /**
-     * Associates plan to a client.
+     * Associates plan to a patient.
      *
      * @return the API result of the request
      *
      * @throws IOException if there is an error while sending the request
      */
-    suspend fun associatePlanToClient(
-        monitorId: UUID,
-        clientId: UUID,
+    suspend fun associatePlanToPatient(
+        physiotherapistId: UUID,
+        patientId: UUID,
         token: String,
         planId: Int,
         startDate: String
     ): APIResult<EmptyResponseBody> =
         post(
-            uri = "/users/monitors/$monitorId/clients/$clientId/plans",
+            uri = "/users/physiotherapists/$physiotherapistId/patients/$patientId/plans",
             token = token,
-            body = PlanToClient(planId, startDate)
+            body = PlanToPatient(planId, startDate)
         )
 
     /**
-     * Gets plans of monitor.
+     * Gets plans of physiotherapist.
      *
      * @return the API result of the request
      *
      * @throws IOException if there is an error while sending the request
      */
-    suspend fun getMonitorPlans(
-        monitorId: UUID,
+    suspend fun getLibraryPlan(physiotherapistId: UUID, planId: Int, token: String): APIResult<pt.ipc_app.service.models.plans.LibraryPlan> =
+        get(uri = "/users/physiotherapists/$physiotherapistId/plans/$planId", token = token)
+
+    suspend fun getPhysiotherapistPlans(
+        physiotherapistId: UUID,
         token: String
     ): APIResult<ListOfPlans> =
         get(
-            uri = "/users/monitors/$monitorId/plans",
+            uri = "/users/physiotherapists/$physiotherapistId/plans",
             token = token
         )
 

@@ -24,7 +24,7 @@ class VideoSubmissionOneTimeWorker(
 
             val res = app.services.exercisesService.submitExerciseVideo(
                 video = File(filePath),
-                clientId = app.sessionManager.userUUID,
+                patientId = app.sessionManager.userUUID,
                 planId = planId.toInt(),
                 dailyListId = dailyListId.toInt(),
                 exerciseId = exerciseId.toInt(),

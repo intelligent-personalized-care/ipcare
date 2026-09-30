@@ -14,19 +14,84 @@ private val AppFont = FontFamily(
     Font(R.font.nunitoregular)
 )
 
-// Set of Material typography styles to start with
+// Set of Material typography styles for healthcare app
 val Typography = Typography(
     h1 = TextStyle(
         fontFamily = AppFont,
         fontWeight = FontWeight.Bold,
-        letterSpacing = 2.sp,
-        fontSize = 42.sp
+        letterSpacing = 0.sp,
+        fontSize = 32.sp
     ),
-
-    button = TextStyle(
+    h2 = TextStyle(
+        fontFamily = AppFont,
+        fontWeight = FontWeight.Bold,
+        letterSpacing = 0.sp,
+        fontSize = 28.sp
+    ),
+    h3 = TextStyle(
+        fontFamily = AppFont,
+        fontWeight = FontWeight.SemiBold,
+        letterSpacing = 0.sp,
+        fontSize = 24.sp
+    ),
+    h4 = TextStyle(
+        fontFamily = AppFont,
+        fontWeight = FontWeight.SemiBold,
+        letterSpacing = 0.sp,
+        fontSize = 20.sp
+    ),
+    h5 = TextStyle(
+        fontFamily = AppFont,
+        fontWeight = FontWeight.Medium,
+        letterSpacing = 0.sp,
+        fontSize = 18.sp
+    ),
+    h6 = TextStyle(
+        fontFamily = AppFont,
+        fontWeight = FontWeight.Medium,
+        letterSpacing = 0.sp,
+        fontSize = 16.sp
+    ),
+    subtitle1 = TextStyle(
         fontFamily = AppFont,
         fontWeight = FontWeight.Normal,
-        letterSpacing = 2.sp,
-        fontSize = 24.sp,
+        letterSpacing = 0.sp,
+        fontSize = 16.sp
+    ),
+    subtitle2 = TextStyle(
+        fontFamily = AppFont,
+        fontWeight = FontWeight.Medium,
+        letterSpacing = 0.sp,
+        fontSize = 14.sp
+    ),
+    body1 = TextStyle(
+        fontFamily = AppFont,
+        fontWeight = FontWeight.Normal,
+        letterSpacing = 0.sp,
+        fontSize = 16.sp
+    ),
+    body2 = TextStyle(
+        fontFamily = AppFont,
+        fontWeight = FontWeight.Normal,
+        letterSpacing = 0.sp,
+        fontSize = 14.sp
+    ),
+    button = TextStyle(
+        fontFamily = AppFont,
+        fontWeight = FontWeight.SemiBold,
+        letterSpacing = 0.5.sp,
+        fontSize = 16.sp,
+    ),
+    caption = TextStyle(
+        fontFamily = AppFont,
+        fontWeight = FontWeight.Normal,
+        letterSpacing = 0.sp,
+        fontSize = 12.sp
+    ),
+    overline = TextStyle(
+        fontFamily = AppFont,
+        fontWeight = FontWeight.Medium,
+        letterSpacing = 1.sp,
+        fontSize = 10.sp
     )
 )

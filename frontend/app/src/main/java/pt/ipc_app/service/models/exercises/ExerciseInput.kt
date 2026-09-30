@@ -5,5 +5,6 @@ import java.util.*
 data class ExerciseInput(
     val exerciseInfoID: UUID,
     val sets: Int,
-    val reps: Int
+    val reps: Int,
+    val sensorProfile: SensorProfile? = null
 )

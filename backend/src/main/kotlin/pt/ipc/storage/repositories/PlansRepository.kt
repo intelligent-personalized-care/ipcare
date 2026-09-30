@@ -8,25 +8,25 @@ import java.util.*
 
 interface PlansRepository {
 
-    fun createPlan(monitorID: UUID, plan: PlanInput): Int
+    fun createPlan(physiotherapistID: UUID, plan: PlanInput): Int
 
-    fun associatePlanToClient(planID: Int, clientID: UUID, startDate: LocalDate, endDate: LocalDate)
+    fun associatePlanToPatient(planID: Int, patientID: UUID, startDate: LocalDate, endDate: LocalDate)
 
-    fun getPlan(planID: Int): PlanOutput?
+    fun getPlan(planID: Int, patientID: UUID? = null): PlanOutput?
 
-    fun getPlanOfMonitor(planID: Int): PlanOutput?
+    fun getPlanOfPhysiotherapist(planID: Int): PlanOutput?
 
-    fun getPlans(monitorID: UUID): List<PlanInfoOutput>
+    fun getPlans(physiotherapistID: UUID): List<PlanInfoOutput>
 
-    fun getPlanOfClientContainingDate(clientID: UUID, date: LocalDate): PlanOutput?
+    fun getPlanOfPatientContainingDate(patientID: UUID, date: LocalDate): PlanOutput?
 
-    fun checkIfPlanIsOfMonitor(monitorID: UUID, planID: Int): Boolean
+    fun checkIfPlanIsOfPhysiotherapist(physiotherapistID: UUID, planID: Int): Boolean
 
-    fun checkIfExistsPlanOfClientInThisPeriod(clientID: UUID, startDate: LocalDate, endDate: LocalDate): Boolean
+    fun checkIfExistsPlanOfPatientInThisPeriod(patientID: UUID, startDate: LocalDate, endDate: LocalDate): Boolean
 
-    fun checkIfClientAlreadyUploadedVideo(clientID: UUID, planID: Int, dailyListID: Int, exerciseID: Int, set: Int): Boolean
+    fun checkIfPatientAlreadyUploadedVideo(patientID: UUID, planID: Int, dailyListID: Int, exerciseID: Int, set: Int): Boolean
 
-    fun checkIfMonitorHasPrescribedExercise(planID: Int, exerciseID: Int, monitorID: UUID): Boolean
+    fun checkIfPhysiotherapistHasPrescribedExercise(planID: Int, exerciseID: Int, physiotherapistID: UUID): Boolean
 
-    fun giveFeedBackOfVideo(clientID: UUID, exerciseID: Int, set: Int, feedBack: String)
+    fun giveFeedBackOfVideo(patientID: UUID, exerciseID: Int, set: Int, feedBack: String, feedbackScore: String? = null)
 }

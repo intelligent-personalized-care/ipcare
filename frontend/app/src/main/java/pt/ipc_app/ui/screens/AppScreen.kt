@@ -2,32 +2,33 @@ package pt.ipc_app.ui.screens
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import pt.ipc_app.ui.components.bottomBar.ButtonBarType
-import pt.ipc_app.ui.components.bottomBar.ClientBottomBar
-import pt.ipc_app.ui.components.bottomBar.MonitorBottomBar
-import pt.ipc_app.ui.screens.about.AboutActivity
+import pt.ipc_app.ui.components.bottomBar.PatientBottomBar
+import pt.ipc_app.ui.components.bottomBar.PhysiotherapistBottomBar
 import pt.ipc_app.ui.screens.exercises.list.ExercisesListActivity
-import pt.ipc_app.ui.screens.home.ClientHomeActivity
-import pt.ipc_app.ui.screens.home.MonitorHomeActivity
+import pt.ipc_app.ui.screens.home.PatientHomeActivity
+import pt.ipc_app.ui.screens.home.PhysiotherapistHomeActivity
 import pt.ipc_app.ui.screens.plan.CreatePlanActivity
-import pt.ipc_app.ui.screens.profile.ClientProfileActivity
-import pt.ipc_app.ui.screens.profile.MonitorProfileActivity
+import pt.ipc_app.ui.screens.profile.PatientProfileActivity
+import pt.ipc_app.ui.screens.profile.PhysiotherapistProfileActivity
 import pt.ipc_app.ui.theme.AppTheme
 import pt.ipc_app.ui.components.TopBar
 
 /**
- * A screen that displays the app of client.
+ * A screen that displays the app of patient.
  *
  * @param content the content to be displayed
  */
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun AppClientScreen(
+fun AppPatientScreen(
     buttonBarClicked: ButtonBarType = ButtonBarType.HOME,
     onNavigated: () -> Unit = { },
     content: @Composable () -> Unit
@@ -39,18 +40,13 @@ fun AppClientScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colors.background),
             topBar = {
-                TopBar(
-                    onInfoRequested = {
-                        if (buttonBarClicked != ButtonBarType.ABOUT)
-                            AboutActivity.navigate(ctx)
-                    }
-                )
+                TopBar()
             },
             bottomBar = {
-                ClientBottomBar(
+                PatientBottomBar(
                     buttonClicked = buttonBarClicked,
                     onHomeClick = {
-                        ClientHomeActivity.navigate(ctx)
+                        PatientHomeActivity.navigate(ctx)
                         onNavigated()
                     },
                     onExercisesClick = {
@@ -58,24 +54,32 @@ fun AppClientScreen(
                         onNavigated()
                     },
                     onProfileClick = {
-                        ClientProfileActivity.navigate(ctx)
+                        PatientProfileActivity.navigate(ctx)
                         onNavigated()
                     }
                 )
             },
-            content = { content() }
+            content = { paddingValues ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                ) {
+                    content()
+                }
+            }
         )
     }
 }
 
 /**
- * A screen that displays the app of monitor.
+ * A screen that displays the app of physiotherapist.
  *
  * @param content the content to be displayed
  */
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun AppMonitorScreen(
+fun AppPhysiotherapistScreen(
     buttonBarClicked: ButtonBarType = ButtonBarType.HOME,
     onNavigated: () -> Unit = { },
     content: @Composable () -> Unit
@@ -87,31 +91,34 @@ fun AppMonitorScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colors.background),
             topBar = {
-                TopBar(
-                    onInfoRequested = {
-                        if (buttonBarClicked != ButtonBarType.ABOUT)
-                            AboutActivity.navigate(ctx)
-                    }
-                )
+                TopBar()
             },
             bottomBar = {
-                MonitorBottomBar(
+                PhysiotherapistBottomBar(
                     buttonClicked = buttonBarClicked,
                     onHomeClick = {
-                        MonitorHomeActivity.navigate(ctx)
+                        PhysiotherapistHomeActivity.navigate(ctx)
                         onNavigated()
                     },
                     onPlanCreateClick = {
-                        CreatePlanActivity.navigate(ctx)
+                        pt.ipc_app.ui.screens.plan.PlanLibraryActivity.navigate(ctx)
                         onNavigated()
                     },
                     onProfileClick = {
-                        MonitorProfileActivity.navigate(ctx)
+                        PhysiotherapistProfileActivity.navigate(ctx)
                         onNavigated()
                     }
                 )
             },
-            content = { content() }
+            content = { paddingValues ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                ) {
+                    content()
+                }
+            }
         )
     }
 }

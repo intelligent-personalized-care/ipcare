@@ -13,8 +13,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import pt.ipc_app.R
 import pt.ipc_app.domain.DailyList
 import pt.ipc_app.domain.exercise.DailyExercise
 import pt.ipc_app.domain.Plan
@@ -27,11 +29,12 @@ fun DailyExercisesList(
     onExerciseSelect: (DailyExercise) -> Unit = { }
 ) {
 
-    if (dailyListSelected != null) {
+    if (dailyListSelected != null && dailyListSelected.exercises.isNotEmpty()) {
         LazyColumn(
             horizontalAlignment = Alignment.Start,
-            modifier = Modifier
-                .border(1.dp, Color(204, 202, 202, 255))
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
                 items(dailyListSelected.exercises) { ex ->
                     DailyExerciseRow(
@@ -41,14 +44,20 @@ fun DailyExercisesList(
                 }
         }
     } else {
-        Text("No exercises for this day.", textAlign = TextAlign.Center)
+        Column(Modifier.fillMaxWidth().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(
+            text = stringResource(R.string.no_exercises_this_day),
+            textAlign = TextAlign.Center
+        )
         Row {
-            Text(text = "Day off")
+            Text(text = stringResource(R.string.day_off))
             Icon(
                 imageVector = Icons.Default.EmojiEmotions,
-                contentDescription = "Emoji",
+                contentDescription = stringResource(R.string.cd_emoji),
                 modifier = Modifier.padding(start = 4.dp)
             )
+        }
         }
     }
 

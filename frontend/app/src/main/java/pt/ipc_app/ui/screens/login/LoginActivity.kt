@@ -12,10 +12,10 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import pt.ipc_app.DependenciesContainer
 import pt.ipc_app.domain.user.Role
-import pt.ipc_app.domain.user.isClient
+import pt.ipc_app.domain.user.isPatient
 import pt.ipc_app.ui.components.ProgressState
-import pt.ipc_app.ui.screens.home.ClientHomeActivity
-import pt.ipc_app.ui.screens.home.MonitorHomeActivity
+import pt.ipc_app.ui.screens.home.PatientHomeActivity
+import pt.ipc_app.ui.screens.home.PhysiotherapistHomeActivity
 import pt.ipc_app.ui.setAppContentInitial
 import pt.ipc_app.utils.viewModelInit
 
@@ -62,10 +62,10 @@ class LoginActivity : ComponentActivity() {
             viewModel.state.collect {
 
                 if (it == ProgressState.FINISHED) {
-                    if (repo.userLoggedIn.role.isClient())
-                        ClientHomeActivity.navigate(this@LoginActivity)
+                    if (repo.userLoggedIn.role.isPatient())
+                        PatientHomeActivity.navigate(this@LoginActivity)
                     else
-                        MonitorHomeActivity.navigate(this@LoginActivity)
+                        PhysiotherapistHomeActivity.navigate(this@LoginActivity)
                     finish()
                 }
             }

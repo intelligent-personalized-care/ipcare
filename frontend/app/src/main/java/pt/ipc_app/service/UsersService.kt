@@ -10,16 +10,16 @@ import pt.ipc_app.service.connection.APIResult
 import pt.ipc_app.service.connection.AUTHORIZATION
 import pt.ipc_app.service.models.EmptyResponseBody
 import pt.ipc_app.service.models.requests.ConnectionRequestInput
-import pt.ipc_app.service.models.exercises.ExercisesOfClients
+import pt.ipc_app.service.models.exercises.ExercisesOfPatients
 import pt.ipc_app.service.models.login.LoginInput
 import pt.ipc_app.service.models.login.LoginOutput
 import pt.ipc_app.service.models.refresh.RefreshTokenInput
 import pt.ipc_app.service.models.refresh.RefreshTokenOutput
-import pt.ipc_app.service.models.register.RegisterClientInput
-import pt.ipc_app.service.models.register.RegisterMonitorInput
+import pt.ipc_app.service.models.register.RegisterPatientInput
+import pt.ipc_app.service.models.register.RegisterPhysiotherapistInput
 import pt.ipc_app.service.models.register.RegisterOutput
 import pt.ipc_app.service.models.requests.ConnectionRequestDecisionInput
-import pt.ipc_app.service.models.requests.RequestsOfMonitor
+import pt.ipc_app.service.models.requests.RequestsOfPhysiotherapist
 import pt.ipc_app.service.models.users.*
 import pt.ipc_app.service.utils.ContentType
 import pt.ipc_app.service.utils.MultipartEntry
@@ -42,13 +42,13 @@ class UsersService(
 ) : HTTPService(apiEndpoint, httpClient, jsonEncoder) {
 
     /**
-     * Registers the client with the given [name], [email] and [password].
+     * Registers the patient with the given [name], [email] and [password].
      *
      * @return the API result of the register request
      *
      * @throws IOException if there is an error while sending the request
      */
-    suspend fun registerClient(
+    suspend fun registerPatient(
         name: String,
         email: String,
         password: String,
@@ -58,8 +58,8 @@ class UsersService(
         physicalCondition: String?
     ): APIResult<RegisterOutput> =
         post(
-            uri = "/users/clients",
-            body = RegisterClientInput(
+            uri = "/users/patients",
+            body = RegisterPatientInput(
                 name = name,
                 email = email,
                 password = password,
@@ -71,20 +71,20 @@ class UsersService(
         )
 
     /**
-     * Registers the monitor with the given [name], [email] and [password].
+     * Registers the physiotherapist with the given [name], [email] and [password].
      *
      * @return the API result of the register request
      *
      * @throws IOException if there is an error while sending the request
      */
-    suspend fun registerMonitor(
+    suspend fun registerPhysiotherapist(
         name: String,
         email: String,
         password: String
     ): APIResult<RegisterOutput> =
         post(
-            uri = "/users/monitors",
-            body = RegisterMonitorInput(
+            uri = "/users/physiotherapists",
+            body = RegisterPhysiotherapistInput(
                 name = name,
                 email = email,
                 password = password
@@ -126,185 +126,185 @@ class UsersService(
         )
 
     /**
-     * Gets the client profile.
+     * Gets the patient profile.
      *
      * @return the API result of the request
      *
      * @throws IOException if there is an error while sending the request
      */
-    suspend fun getClientProfile(
-        clientId: UUID,
+    suspend fun getPatientProfile(
+        patientId: UUID,
         token: String
-    ): APIResult<ClientOutput> =
+    ): APIResult<PatientOutput> =
         get(
-            uri = "/users/clients/$clientId/profile",
+            uri = "/users/patients/$patientId/profile",
             token = token
         )
 
     /**
-     * Gets the monitor profile.
+     * Gets the physiotherapist profile.
      *
      * @return the API result of the request
      *
      * @throws IOException if there is an error while sending the request
      */
-    suspend fun getMonitorProfile(
-        monitorId: UUID,
+    suspend fun getPhysiotherapistProfile(
+        physiotherapistId: UUID,
         token: String
-    ): APIResult<MonitorProfile> =
+    ): APIResult<PhysiotherapistProfile> =
         get(
-            uri = "/users/monitors/$monitorId/profile",
+            uri = "/users/physiotherapists/$physiotherapistId/profile",
             token = token
         )
 
     /**
-     * Gets the monitor of client.
+     * Gets the physiotherapist of patient.
      *
      * @return the API result of the request
      *
      * @throws IOException if there is an error while sending the request
      */
-    suspend fun getMonitorOfClient(
-        clientId: UUID,
+    suspend fun getPhysiotherapistOfPatient(
+        patientId: UUID,
         token: String
-    ): APIResult<MonitorOutput> =
+    ): APIResult<PhysiotherapistOutput> =
         get(
-            uri = "/users/clients/$clientId/monitor",
+            uri = "/users/patients/$patientId/physiotherapist",
             token = token
         )
 
     /**
-     * Gets client's details of monitor.
+     * Gets patient's details of physiotherapist.
      *
      * @return the API result of the request
      *
      * @throws IOException if there is an error while sending the request
      */
-    suspend fun getClientOfMonitor(
-        monitorId: UUID,
-        clientId: UUID,
+    suspend fun getPatientOfPhysiotherapist(
+        physiotherapistId: UUID,
+        patientId: UUID,
         token: String
-    ): APIResult<ClientOfMonitor> =
+    ): APIResult<PatientOfPhysiotherapist> =
         get(
-            uri = "/users/monitors/$monitorId/clients/$clientId",
+            uri = "/users/physiotherapists/$physiotherapistId/patients/$patientId",
             token = token
         )
 
     /**
-     * Gets clients of monitor.
+     * Gets patients of physiotherapist.
      *
      * @return the API result of the request
      *
      * @throws IOException if there is an error while sending the request
      */
-    suspend fun getClientsOfMonitor(
-        monitorId: UUID,
+    suspend fun getPatientsOfPhysiotherapist(
+        physiotherapistId: UUID,
         token: String
-    ): APIResult<ClientsOfMonitor> =
+    ): APIResult<PatientsOfPhysiotherapist> =
         get(
-            uri = "/users/monitors/$monitorId/clients",
+            uri = "/users/physiotherapists/$physiotherapistId/patients",
             token = token
         )
 
     /**
-     * Search monitors available.
+     * Search physiotherapists available.
      *
      * @return the API result of the request
      *
      * @throws IOException if there is an error while sending the request
      */
-    suspend fun searchMonitorsAvailable(
+    suspend fun searchPhysiotherapistsAvailable(
         name: String?,
         token: String
-    ): APIResult<ListMonitorsOutput> =
+    ): APIResult<ListPhysiotherapistsOutput> =
         get(
-            uri = "/users/monitors" + if (name != null) "?name=$name" else "",
+            uri = "/users/physiotherapists" + if (name != null) "?name=${java.net.URLEncoder.encode(name, "UTF-8")}" else "",
             token = token
         )
 
     /**
-     * Gets the current plan of client.
+     * Gets the current plan of patient.
      *
      * @return the API result of the request
      *
      * @throws IOException if there is an error while sending the request
      */
-    suspend fun getCurrentPlanOfClient(
-        clientId: UUID,
+    suspend fun getCurrentPlanOfPatient(
+        patientId: UUID,
         date: LocalDate = LocalDate.now(),
         token: String
     ): APIResult<Plan> =
         get(
-            uri = "/users/clients/$clientId/plans?date=$date",
+            uri = "/users/patients/$patientId/plans?date=$date",
             token = token
         )
 
     /**
-     * Connects the monitor with the client.
+     * Connects the physiotherapist with the patient.
      *
      * @return the API result of the request
      *
      * @throws IOException if there is an error while sending the request
      */
-    suspend fun connectMonitor(
-        monitorId: UUID,
-        clientId: UUID,
+    suspend fun connectPhysiotherapist(
+        physiotherapistId: UUID,
+        patientId: UUID,
         comment: String?,
         token: String
     ): APIResult<EmptyResponseBody> =
         post(
-            uri = "/users/monitors/$monitorId",
+            uri = "/users/physiotherapists/$physiotherapistId",
             token = token,
-            body = ConnectionRequestInput(clientId, comment)
+            body = ConnectionRequestInput(patientId, comment)
         )
 
     /**
-     * Disconnects a client from the monitor.
+     * Disconnects a patient from the physiotherapist.
      *
      * @return the API result of the request
      *
      * @throws IOException if there is an error while sending the request
      */
-    suspend fun disconnectMonitor(
-        clientId: UUID,
-        monitorId: UUID? = null,
+    suspend fun disconnectPhysiotherapist(
+        patientId: UUID,
+        physiotherapistId: UUID? = null,
         token: String
     ): APIResult<EmptyResponseBody> =
         delete(
-            uri = if (monitorId != null) "/users/monitors/$monitorId/clients/$clientId" else "/users/clients/$clientId/monitor",
+            uri = if (physiotherapistId != null) "/users/physiotherapists/$physiotherapistId/patients/$patientId" else "/users/patients/$patientId/physiotherapist",
             token = token
         )
 
     /**
-     * Gets all monitor requests of monitor.
+     * Gets all physiotherapist requests of physiotherapist.
      *
      * @return the API result of the request
      *
      * @throws IOException if there is an error while sending the request
      */
-    suspend fun getMonitorRequests(
-        monitorId: UUID,
+    suspend fun getPhysiotherapistRequests(
+        physiotherapistId: UUID,
         token: String
-    ): APIResult<RequestsOfMonitor> =
+    ): APIResult<RequestsOfPhysiotherapist> =
         get(
-            uri = "/users/monitors/$monitorId/requests",
+            uri = "/users/physiotherapists/$physiotherapistId/requests",
             token = token
         )
 
     /**
-     * Gets all exercises of clients of monitor.
+     * Gets all exercises of patients of physiotherapist.
      *
      * @return the API result of the request
      *
      * @throws IOException if there is an error while sending the request
      */
-    suspend fun getExercisesOfClients(
-        monitorId: UUID,
+    suspend fun getExercisesOfPatients(
+        physiotherapistId: UUID,
         date: LocalDate,
         token: String
-    ): APIResult<ExercisesOfClients> =
+    ): APIResult<ExercisesOfPatients> =
         get(
-            uri = "/users/monitors/$monitorId/clients/exercises?date=$date",
+            uri = "/users/physiotherapists/$physiotherapistId/patients/exercises?date=$date",
             token = token
         )
 
@@ -316,34 +316,34 @@ class UsersService(
      * @throws IOException if there is an error while sending the request
      */
     suspend fun decideConnectionRequest(
-        monitorId: UUID,
+        physiotherapistId: UUID,
         requestId: UUID,
         requestDecision: ConnectionRequestDecisionInput,
         token: String
-    ): APIResult<ClientsOfMonitor> =
+    ): APIResult<PatientsOfPhysiotherapist> =
         post(
-            uri = "/users/monitors/$monitorId/requests/$requestId",
+            uri = "/users/physiotherapists/$physiotherapistId/requests/$requestId",
             token = token,
             body = requestDecision
         )
 
     /**
-     * Rates the monitor.
+     * Rates the physiotherapist.
      *
      * @return the API result of the request
      *
      * @throws IOException if there is an error while sending the request
      */
-    suspend fun rateMonitor(
-        monitorId: UUID,
-        clientId: UUID,
+    suspend fun ratePhysiotherapist(
+        physiotherapistId: UUID,
+        patientId: UUID,
         stars: Int,
         token: String
     ): APIResult<EmptyResponseBody> =
         post(
-            uri = "/users/monitors/$monitorId/rate",
+            uri = "/users/physiotherapists/$physiotherapistId/rate",
             token = token,
-            body = RatingInput(clientId, stars)
+            body = RatingInput(patientId, stars)
         )
 
     /**
@@ -383,7 +383,7 @@ class UsersService(
         )
 
     /**
-     * Submits the credential document of a monitor.
+     * Submits the credential document of a physiotherapist.
      *
      * @return the API result of the request
      *
@@ -391,11 +391,11 @@ class UsersService(
      */
     suspend fun submitCredentialDocument(
         doc: File,
-        monitorId: UUID,
+        physiotherapistId: UUID,
         token: String
     ): APIResult<EmptyResponseBody> =
         postWithMultipartBody(
-            uri = "/users/monitors/$monitorId/credential",
+            uri = "/users/physiotherapists/$physiotherapistId/credential",
             token = token,
             multipartEntries = listOf(MultipartEntry(name = "credential", value = doc, contentType = ContentType.PDF))
         )

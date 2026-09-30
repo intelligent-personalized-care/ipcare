@@ -1,5 +1,7 @@
 package pt.ipc_app.ui.components
 
+import androidx.compose.ui.res.stringResource
+
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -64,7 +66,7 @@ fun AuthorInfoView(
             Row {
                 Image(
                     painter = painterResource(R.drawable.ic_github_dark),
-                    contentDescription = "Github",
+                    contentDescription = stringResource(R.string.label_github),
                     modifier = Modifier
                         .clickable { onOpenUrl(author.githubLink) }
                         .padding(8.dp)
@@ -72,7 +74,7 @@ fun AuthorInfoView(
 
                 Image(
                     painter = painterResource(R.drawable.ic_email),
-                    contentDescription = "Email",
+                    contentDescription = stringResource(R.string.label_email),
                     modifier = Modifier
                         .clickable { onSendEmail(author.email) }
                         .padding(8.dp)

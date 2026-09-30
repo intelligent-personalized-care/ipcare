@@ -1,79 +1,58 @@
 <h1 align="center">
-    <img src="docs/imgs/logo.png" alt="Intelligent Personalized Care" width="150">
-<br>
-    Intelligent Personalized Care
+  <img src="docs/imgs/logo.png" alt="IPC logo" width="120"><br>
+  Intelligent Personalized Care
 </h1>
-<h4 align="center">A Solution to promote physical agility and recovery.</h4>
-<br>
 
-> Developed in the scope of a final bachelor degree project in Computer Science and Engineering, at [ISEL](https://www.isel.pt/).
+> Developed in the scope of a master's thesis in Computer Science, at NOVA FCT.
 
-The Intelligent Personalized Care project aims to respond to the rapidly increasing sedentary lifestyle and isolation of the population. Using advanced vision techniques to provide personalized and effective remote care for patients in different health scenarios, it will be possible to reduce and prevent sedentary lifestyle, and promote physical exercise and rehabilitation in people. 
+IPC is a rehabilitation monitoring research project that connects an Android application, a Kotlin backend and a wearable prototype. This version extends the original Intelligent Personalized Care bachelor project in the context of a master’s dissertation in Computer Science and Engineering.
 
-This project is based on an Android application to promote physical agility and recovery, through (tele) exercise and (tele) rehabilitation using immersive approaches with vision techniques and artificial intelligence. In addition, the application will offer advanced patient monitoring and follow-up features, allowing physiotherapists to monitor the patient progress. 
+Patients follow prescribed exercise plans using either camera-based movement tracking or two wearable inertial sensors. Physiotherapists manage plans, configure exercise targets and review recorded sessions and patient progress. The catalogue focuses on the **wrist, elbow and knee**.
 
----
+## What the system does
 
-## Documentation
+- **Patients:** consult assigned plans, filter the exercise library by joint, follow demonstrations, perform exercises and report whether external load was used, including its weight.
+- **Physiotherapists:** maintain a plan library, assign plans to patients, customise exercise parameters and provide written feedback and a score from one to five stars.
+- **Camera mode:** CameraX captures video while Google ML Kit supplies pose landmarks. The application calculates joint angles, calibrates the starting position and counts repetitions using the prescribed target, hold and return conditions.
+- **Sensor mode:** the application obtains the effective exercise profile from the backend and sends it over BLE to an ESP32-C3. Two ICM-20948 sensors measure relative segment movement. Calibration and execution status are shown in the app and indicated by the wearable LED.
+- **Session history:** repeated plan assignments retain separate histories. Camera recordings and sensor sessions can be reviewed by the associated physiotherapist.
+- **Usability:** English and Portuguese UI resources, spoken exercise feedback and a guided sensor preparation flow.
+- **Video recovery:** completed recordings are copied to the phone Gallery. Failed uploads remain pending, and patients can save a set locally and continue before retrying submission.
 
-The project's final report is
-available [here](https://github.com/intelligent-personalized-care/ipc/blob/main/docs/rfG23.pdf).
+This is a research prototype. Automated checks verify software behaviour, but do not establish clinical accuracy, clinical effectiveness or medical-device certification.
 
-You can find additional documentation in the [docs](https://github.com/intelligent-personalized-care/ipc/tree/main/docs) folder.
+## Architecture
 
----
+The Android application communicates with a REST API using access and refresh tokens. The backend uses controllers, services and JDBI repositories, with PostgreSQL for structured data and Google Cloud Storage for media. Server-sent events deliver application updates.
 
-## Languages
+Camera processing runs on the phone. The wearable communicates with the phone through BLE and does not connect directly to the backend. Exercise settings are resolved from catalogue defaults and applicable plan/assignment overrides rather than hardcoded exercise definitions in the firmware.
 
-We focused on choosing **_Kotlin_** as the master language, both in the backend and frontend. There are some **_Java_** classes created by Google, which are used to handle the ML Kit Pose Detection. We are using **_PostgreSQL_** in the database.
+The wearable contains two physical modules: a main module with the ESP32-C3, one ICM-20948, a TTP223 touch sensor and an RGB LED, and a second module containing the additional ICM-20948. Both sensors are wired to the same controller. The main module is powered by a power bank incorporated into its Velcro mounting.
 
----
-
-## Frameworks / Libraries
-
-This project uses the following open source packages:
-
-* [Spring](https://spring.io/)
-* [JDBI](https://jdbi.org/)
-* [Jetpack Compose](https://developer.android.com/jetpack/compose)
-* [Google Cloud Storage](https://cloud.google.com/storage)
-* [ML Kit – API Pose Detection](https://developers.google.com/ml-kit/vision/pose-detection)
-
----
-
-## Test Our App
+## Test the App
 
 Scan this Qr Code to download the app:
 <h1 align="left">
     <img src="docs/imgs/qrcode.png" alt="App QR Code" width="150">
 </h1>
 
-Here are some dummy accounts to login and experiment:
+## Repository contents
 
-- **Client**:
-    - **email**: **jose123@gmail.com**
-    - **password**: @Password1
+- `frontend/` - Android application, JVM tests and Android instrumentation tests.
+- `backend/` - Spring Boot API, PostgreSQL schema/catalogue and backend tests.
+- `arduino/` - wearable firmware. Check the variant and its pin definitions against the physical board before flashing.
+- `docs/` - API specification, Postman collection, integration notes and project material.
 
-- **Monitor**:
-    - **email**: **pedro123@gmail.com**
-    - **password**: @Password1
 
----
+## Project origins and acknowledgements
 
-## Special Thanks
+The original IPC bachelor project was developed at [ISEL](https://www.isel.pt/) by [Guilherme Cepeda](https://github.com/bodeborder), [Rodrigo Neves](https://github.com/RodrigoNevesWork) and [Tiago Martinho](https://github.com/tiagomartinhoo), supervised by [Paulo Pereira](https://github.com/palbp). This repository contains its subsequent rehabilitation-monitoring extensions.
 
-Special Thanks to the **Muscle Wiki** organization, from where we took our exercise videos and most of our exercise descriptions.
+## Author
 
-To access their [website](https://musclewiki.com/).
-
----
-
-## Authors
-
-* [Guilherme Cepeda](https://github.com/bodeborder)
-* [Rodrigo Neves](https://github.com/RodrigoNevesWork)
 * [Tiago Martinho](https://github.com/tiagomartinhoo)
 
-## Supervisor
+## Supervisors
 
-* [Paulo Pereira](https://github.com/palbp) , ISEL
+* Carmen Morgado, NOVA FCT
+* Fernanda Barbosa, NOVA FCT

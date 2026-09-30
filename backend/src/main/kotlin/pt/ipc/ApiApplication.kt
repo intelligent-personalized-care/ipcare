@@ -39,11 +39,24 @@ class AppConfig {
 class ApiApplication {
 
     @Bean
-    fun jdbi(): Jdbi = Jdbi.create(
-        PGSimpleDataSource().apply {
-            setURL(System.getenv("postgresql_database"))
-        }
-    ).configure()
+    fun jdbi(): Jdbi {
+        val dbName = System.getenv("DB_NAME")
+        val dbUser = System.getenv("DB_USER")
+        val dbPass = System.getenv("DB_PASS")
+        val instanceConnectionName =
+            System.getenv("INSTANCE_CONNECTION_NAME")
+
+        val jdbcUrl =
+            "jdbc:postgresql://google/$dbName" +
+                    "?socketFactory=com.google.cloud.sql.postgres.SocketFactory" +
+                    "&cloudSqlInstance=$instanceConnectionName"
+
+        return Jdbi.create(
+            jdbcUrl,
+            dbUser,
+            dbPass
+        ).configure()
+    }
 }
 
 fun main(args: Array<String>) {

@@ -26,7 +26,7 @@ class StorageIntegrity(
     @Scheduled(fixedDelay = DAY)
     fun removeCredentials() {
         transactionManager.run {
-            val docsIDs = it.monitorRepository.getAllCredentials()
+            val docsIDs = it.physiotherapistRepository.getAllCredentials()
 
             val cloudIDs = it.cloudStorage.getAllCredentialsIDs()
 
@@ -40,29 +40,29 @@ class StorageIntegrity(
             docsIDs.forEach { docID ->
                 if (!cloudIDs.contains(docID)) {
                     println("DELETING SQL CREDENTIAL -> $docID")
-                    it.monitorRepository.deleteCredential(monitorID = docID)
+                    it.physiotherapistRepository.deleteCredential(physiotherapistID = docID)
                 }
             }
         }
     }
 
     @Scheduled(fixedDelay = DAY)
-    fun removeClientsVideos() {
+    fun removePatientsVideos() {
         transactionManager.run {
-            val clientsVideosIDs = it.clientsRepository.getClientsVideosIDs()
-            val cloudIDs = it.cloudStorage.getClientsVideosIDs()
+            val patientsVideosIDs = it.patientsRepository.getPatientsVideosIDs()
+            val cloudIDs = it.cloudStorage.getPatientsVideosIDs()
 
             cloudIDs.forEach { cloudID ->
-                if (!clientsVideosIDs.contains(cloudID)) {
-                    println("DELETING CLOUD CLIENT VIDEO -> $cloudID")
-                    it.cloudStorage.deleteClientVideo(fileName = cloudID)
+                if (!patientsVideosIDs.contains(cloudID)) {
+                    println("DELETING CLOUD PATIENT VIDEO -> $cloudID")
+                    it.cloudStorage.deletePatientVideo(fileName = cloudID)
                 }
             }
 
-            clientsVideosIDs.forEach { videoID ->
+            patientsVideosIDs.forEach { videoID ->
                 if (!cloudIDs.contains(videoID)) {
-                    println("DELETING SQL CLIENT VIDEO -> $videoID")
-                    it.clientsRepository.deleteClientVideoID(videoID = videoID)
+                    println("DELETING SQL PATIENT VIDEO -> $videoID")
+                    it.patientsRepository.deletePatientVideoID(videoID = videoID)
                 }
             }
         }
