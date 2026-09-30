@@ -1,11 +1,11 @@
 <h1 align="center">
   <img src="docs/imgs/logo.png" alt="IPC logo" width="120"><br>
-  Intelligent Personalized Care
+  IPCare
 </h1>
 
 > Developed in the scope of a master's thesis in Computer Science, at NOVA FCT.
 
-IPC is a rehabilitation monitoring research project that connects an Android application, a Kotlin backend and a wearable prototype. This version extends the original Intelligent Personalized Care bachelor project in the context of a master’s dissertation in Computer Science and Engineering.
+IPCare is a rehabilitation monitoring research project that connects an Android application, a Kotlin backend and a wearable prototype. This version extends the original Intelligent Personalized Care bachelor project in the context of a master’s dissertation in Computer Science and Engineering.
 
 Patients follow prescribed exercise plans using either camera-based movement tracking or two wearable inertial sensors. Physiotherapists manage plans, configure exercise targets and review recorded sessions and patient progress. The catalogue focuses on the **wrist, elbow and knee**.
 
